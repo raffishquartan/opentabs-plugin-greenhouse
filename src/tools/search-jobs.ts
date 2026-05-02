@@ -11,7 +11,12 @@ import { extractWorkplaceType } from '../metadata.js';
 
 const InputSchema = z.object({
   board: z.string().optional().describe('Board token or full job-board URL. Optional.'),
-  query: z.string().min(1).describe('Search string. Case-insensitive substring match across title, location, departments, offices, and the description body.'),
+  query: z
+    .string()
+    .min(1)
+    .describe(
+      'Search string. Case-insensitive substring match across title, location, departments, offices, and the description body.',
+    ),
 });
 
 const SearchHitSchema = z.object({
@@ -56,10 +61,7 @@ function classifyMatches(job: Job, query: string): MatchField[] {
   return matches;
 }
 
-export async function runSearchJobs(
-  input: SearchJobsInput,
-  deps: SearchJobsDeps = {},
-): Promise<SearchJobsOutput> {
+export async function runSearchJobs(input: SearchJobsInput, deps: SearchJobsDeps = {}): Promise<SearchJobsOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const data = await fetchJobs(token, deps.fetchImpl);
   const q = input.query.toLowerCase();

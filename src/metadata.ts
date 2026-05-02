@@ -47,7 +47,8 @@ function decode(html: string): string {
     .replace(/&amp;/g, '&');
 }
 
-const PAY_RANGE_RE = /<div\s+class="pay-range">\s*<span[^>]*>([^<]+)<\/span>\s*<span[^>]*class="divider"[^>]*>[^<]*<\/span>\s*<span[^>]*>([^<]+)<\/span>/i;
+const PAY_RANGE_RE =
+  /<div\s+class="pay-range">\s*<span[^>]*>([^<]+)<\/span>\s*<span[^>]*class="divider"[^>]*>[^<]*<\/span>\s*<span[^>]*>([^<]+)<\/span>/i;
 const PAY_TITLE_RE = /<div\s+class="title">([^<]+)<\/div>\s*<div\s+class="pay-range">/i;
 
 /**
@@ -65,13 +66,14 @@ export function extractSalaryRange(content: string | null | undefined): SalaryRa
   const max = match[2].trim();
   const titleMatch = PAY_TITLE_RE.exec(text);
   const titleText = titleMatch?.[1]?.trim() ?? null;
-  const period = titleText && /annual|yearly|per\s+year/i.test(titleText)
-    ? 'annual'
-    : titleText && /hour/i.test(titleText)
-      ? 'hourly'
-      : titleText && /month/i.test(titleText)
-        ? 'monthly'
-        : null;
+  const period =
+    titleText && /annual|yearly|per\s+year/i.test(titleText)
+      ? 'annual'
+      : titleText && /hour/i.test(titleText)
+        ? 'hourly'
+        : titleText && /month/i.test(titleText)
+          ? 'monthly'
+          : null;
   const currencyMatch = /([A-Z]{3})\b/.exec(`${min} ${max}`);
   const currency = currencyMatch?.[1] ?? null;
   return {

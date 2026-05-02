@@ -34,11 +34,16 @@ beforeEach(() => {
 
 describe('api response cache (revalidation-based)', () => {
   it('caches a 200 response with its ETag and Last-Modified', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(JSON.stringify(jobsFixture), {
-        status: 200,
-        headers: { 'content-type': 'application/json', etag: '"abc"', 'last-modified': 'Wed, 21 Oct 2026 07:28:00 GMT' },
-      }),
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(JSON.stringify(jobsFixture), {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+            etag: '"abc"',
+            'last-modified': 'Wed, 21 Oct 2026 07:28:00 GMT',
+          },
+        }),
     );
     await fetchJobs('airbnb', fetchImpl);
     expect(fetchImpl).toHaveBeenCalledTimes(1);
@@ -76,9 +81,7 @@ describe('api response cache (revalidation-based)', () => {
     const updated = { ...jobsFixture, meta: { total: 99 } };
     const fetchImpl = vi
       .fn()
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify(jobsFixture), { status: 200, headers: { etag: '"v1"' } }),
-      )
+      .mockResolvedValueOnce(new Response(JSON.stringify(jobsFixture), { status: 200, headers: { etag: '"v1"' } }))
       .mockResolvedValueOnce(new Response(JSON.stringify(updated), { status: 200, headers: { etag: '"v2"' } }));
 
     const first = await fetchJobs('airbnb', fetchImpl);
@@ -88,8 +91,8 @@ describe('api response cache (revalidation-based)', () => {
   });
 
   it('cacheBypass=true skips conditional headers and always re-fetches', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(JSON.stringify(jobsFixture), { status: 200, headers: { etag: '"abc"' } }),
+    const fetchImpl = vi.fn(
+      async () => new Response(JSON.stringify(jobsFixture), { status: 200, headers: { etag: '"abc"' } }),
     );
     await fetchJobs('airbnb', fetchImpl);
     await fetchJobs('airbnb', fetchImpl, true);
@@ -103,9 +106,7 @@ describe('api response cache (revalidation-based)', () => {
     const fetchImpl = vi
       .fn()
       .mockResolvedValueOnce(new Response('boom', { status: 500, statusText: 'Server Error' }))
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify(jobsFixture), { status: 200, headers: { etag: '"abc"' } }),
-      );
+      .mockResolvedValueOnce(new Response(JSON.stringify(jobsFixture), { status: 200, headers: { etag: '"abc"' } }));
     await expect(fetchJobs('airbnb', fetchImpl)).rejects.toThrow(/500/);
     const result = await fetchJobs('airbnb', fetchImpl);
     expect(result.meta.total).toBe(5);

@@ -52,7 +52,8 @@ describe('extractSalaryRange', () => {
   });
 
   it('handles entity-encoded content (Greenhouse default)', () => {
-    const html = '&lt;div class=&quot;pay-range&quot;&gt;&lt;span&gt;$100,000&lt;/span&gt;&lt;span class=&quot;divider&quot;&gt;&amp;mdash;&lt;/span&gt;&lt;span&gt;$120,000&lt;/span&gt;&lt;/div&gt;';
+    const html =
+      '&lt;div class=&quot;pay-range&quot;&gt;&lt;span&gt;$100,000&lt;/span&gt;&lt;span class=&quot;divider&quot;&gt;&amp;mdash;&lt;/span&gt;&lt;span&gt;$120,000&lt;/span&gt;&lt;/div&gt;';
     const result = extractSalaryRange(html);
     expect(result?.min).toBe('$100,000');
     expect(result?.max).toBe('$120,000');
