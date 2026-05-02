@@ -3,6 +3,7 @@
 
 import { OpenTabsPlugin } from '@opentabs-dev/plugin-sdk';
 import type { ToolDefinition } from '@opentabs-dev/plugin-sdk';
+import { getJob } from './tools/get-job.js';
 import { listJobs } from './tools/list-jobs.js';
 
 class GreenhousePlugin extends OpenTabsPlugin {
@@ -17,7 +18,7 @@ class GreenhousePlugin extends OpenTabsPlugin {
     '*://job-boards.eu.greenhouse.io/*',
   ];
 
-  override readonly tools: ToolDefinition[] = [listJobs];
+  override readonly tools: ToolDefinition[] = [listJobs, getJob];
 
   override async isReady(): Promise<boolean> {
     return true;
