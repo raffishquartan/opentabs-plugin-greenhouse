@@ -35,10 +35,7 @@ export interface ListOfficesDeps {
   currentUrl?: string;
 }
 
-export async function runListOffices(
-  input: ListOfficesInput,
-  deps: ListOfficesDeps = {},
-): Promise<ListOfficesOutput> {
+export async function runListOffices(input: ListOfficesInput, deps: ListOfficesDeps = {}): Promise<ListOfficesOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const data = await fetchOffices(token, deps.fetchImpl);
   return {

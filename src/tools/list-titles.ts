@@ -29,10 +29,7 @@ export interface ListTitlesDeps {
   currentUrl?: string;
 }
 
-export async function runListTitles(
-  input: ListTitlesInput,
-  deps: ListTitlesDeps = {},
-): Promise<ListTitlesOutput> {
+export async function runListTitles(input: ListTitlesInput, deps: ListTitlesDeps = {}): Promise<ListTitlesOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const data = await fetchJobs(token, deps.fetchImpl);
   const counts = new Map<string, number>();

@@ -12,19 +12,20 @@ const InputSchema = z.object({
   board: z
     .string()
     .optional()
-    .describe('Board token like "airbnb", or a full URL such as https://job-boards.greenhouse.io/airbnb. Optional - if omitted the board is inferred from the active tab.'),
+    .describe(
+      'Board token like "airbnb", or a full URL such as https://job-boards.greenhouse.io/airbnb. Optional - if omitted the board is inferred from the active tab.',
+    ),
   department: z
     .union([z.string(), z.number()])
     .optional()
-    .describe('Filter by department name (case-insensitive exact) or numeric id. Matches the entity and any descendant departments.'),
+    .describe(
+      'Filter by department name (case-insensitive exact) or numeric id. Matches the entity and any descendant departments.',
+    ),
   office: z
     .union([z.string(), z.number()])
     .optional()
     .describe('Filter by office name or numeric id. Matches the entity and any descendant offices.'),
-  location_contains: z
-    .string()
-    .optional()
-    .describe('Case-insensitive substring filter on the job\'s posted location.'),
+  location_contains: z.string().optional().describe("Case-insensitive substring filter on the job's posted location."),
   title_contains: z.string().optional().describe('Case-insensitive substring filter on the job title.'),
   updated_after: z
     .string()
