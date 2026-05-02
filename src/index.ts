@@ -10,6 +10,7 @@ import { listLocations } from './tools/list-locations.js';
 import { listOffices } from './tools/list-offices.js';
 import { listTitles } from './tools/list-titles.js';
 import { recentJobs } from './tools/recent-jobs.js';
+import { summary } from './tools/summary.js';
 import { validateApi } from './tools/validate-api.js';
 
 class GreenhousePlugin extends OpenTabsPlugin {
@@ -28,6 +29,7 @@ class GreenhousePlugin extends OpenTabsPlugin {
     listJobs,
     getJob,
     recentJobs,
+    summary,
     listDepartments,
     listOffices,
     listLocations,
