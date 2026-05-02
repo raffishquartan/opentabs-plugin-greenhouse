@@ -89,7 +89,7 @@ describe('fetchJobs', () => {
         new Response(JSON.stringify(jobsFixture), { status: 200, headers: { 'content-type': 'application/json' } }),
     );
     const result = await fetchJobs('airbnb', fetchImpl);
-    expect(fetchImpl).toHaveBeenCalledWith('https://boards-api.greenhouse.io/v1/boards/airbnb/jobs?content=true');
+    expect(fetchImpl.mock.calls[0]?.[0]).toBe('https://boards-api.greenhouse.io/v1/boards/airbnb/jobs?content=true');
     expect(result.meta.total).toBe(5);
     expect(result.jobs.length).toBe(5);
   });
@@ -126,7 +126,7 @@ describe('fetchJob', () => {
         }),
     );
     const result = await fetchJob('airbnb', 7649441, fetchImpl);
-    expect(fetchImpl).toHaveBeenCalledWith('https://boards-api.greenhouse.io/v1/boards/airbnb/jobs/7649441');
+    expect(fetchImpl.mock.calls[0]?.[0]).toBe('https://boards-api.greenhouse.io/v1/boards/airbnb/jobs/7649441');
     expect(result.id).toBe(7649441);
   });
 });
@@ -141,7 +141,7 @@ describe('fetchDepartments', () => {
         }),
     );
     const result = await fetchDepartments('airbnb', fetchImpl);
-    expect(fetchImpl).toHaveBeenCalledWith('https://boards-api.greenhouse.io/v1/boards/airbnb/departments');
+    expect(fetchImpl.mock.calls[0]?.[0]).toBe('https://boards-api.greenhouse.io/v1/boards/airbnb/departments');
     expect(result.departments.length).toBe(5);
   });
 });
@@ -153,7 +153,7 @@ describe('fetchOffices', () => {
         new Response(JSON.stringify(officesFixture), { status: 200, headers: { 'content-type': 'application/json' } }),
     );
     const result = await fetchOffices('airbnb', fetchImpl);
-    expect(fetchImpl).toHaveBeenCalledWith('https://boards-api.greenhouse.io/v1/boards/airbnb/offices');
+    expect(fetchImpl.mock.calls[0]?.[0]).toBe('https://boards-api.greenhouse.io/v1/boards/airbnb/offices');
     expect(result.offices.length).toBe(5);
   });
 });
