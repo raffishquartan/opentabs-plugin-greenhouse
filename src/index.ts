@@ -9,6 +9,7 @@ import { listJobs } from './tools/list-jobs.js';
 import { listLocations } from './tools/list-locations.js';
 import { listOffices } from './tools/list-offices.js';
 import { listTitles } from './tools/list-titles.js';
+import { validateApi } from './tools/validate-api.js';
 
 class GreenhousePlugin extends OpenTabsPlugin {
   override readonly name = 'greenhouse';
@@ -29,6 +30,7 @@ class GreenhousePlugin extends OpenTabsPlugin {
     listOffices,
     listLocations,
     listTitles,
+    validateApi,
   ];
 
   override async isReady(): Promise<boolean> {
