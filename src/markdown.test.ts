@@ -37,4 +37,9 @@ describe('htmlToMarkdown', () => {
     const md = htmlToMarkdown('<p>See <a href="https://example.com/x">here</a></p>');
     expect(md).toBe('See [here](https://example.com/x)');
   });
+
+  it('decodes HTML entities before converting (Greenhouse content quirk)', () => {
+    // Greenhouse stores `content` as entity-escaped text rather than raw HTML.
+    expect(htmlToMarkdown('&lt;p&gt;Hello &amp; world&lt;/p&gt;')).toBe('Hello & world');
+  });
 });
