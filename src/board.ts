@@ -7,11 +7,7 @@ export interface ResolveBoardTokenInput {
 }
 
 const TOKEN_RE = /^[a-z0-9_-]+$/;
-const KNOWN_HOSTS = new Set([
-  'boards.greenhouse.io',
-  'job-boards.greenhouse.io',
-  'job-boards.eu.greenhouse.io',
-]);
+const KNOWN_HOSTS = new Set(['boards.greenhouse.io', 'job-boards.greenhouse.io', 'job-boards.eu.greenhouse.io']);
 
 function tryExtractFromUrl(s: string): string | null {
   try {

@@ -36,10 +36,7 @@ interface Probe {
   run: () => Promise<unknown>;
 }
 
-export async function runValidateApi(
-  input: ValidateApiInput,
-  deps: ValidateApiDeps = {},
-): Promise<ValidateApiOutput> {
+export async function runValidateApi(input: ValidateApiInput, deps: ValidateApiDeps = {}): Promise<ValidateApiOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const probes: Probe[] = [
     { endpoint: '/jobs', run: () => fetchJobs(token, deps.fetchImpl) },

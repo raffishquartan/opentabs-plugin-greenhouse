@@ -4,19 +4,11 @@
 import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('@opentabs-dev/plugin-sdk', () => ({
-  ToolError: class extends Error {
-    static auth(msg: string) {
-      return new this(msg);
-    }
-    static notFound(msg: string) {
-      return new this(msg);
-    }
-    static validation(msg: string) {
-      return new this(msg);
-    }
-    static internal(msg: string) {
-      return new this(msg);
-    }
+  ToolError: {
+    auth: (msg: string) => new Error(msg),
+    notFound: (msg: string) => new Error(msg),
+    validation: (msg: string) => new Error(msg),
+    internal: (msg: string) => new Error(msg),
   },
 }));
 
@@ -144,17 +136,14 @@ describe('applyJobFilters', () => {
       location: { name: 'Paris' },
       departments: [{ id: 200, name: 'Engineering', parent_id: 20, child_ids: [] }],
     });
-    const result = applyJobFilters(
-      [a, b],
-      { department: 'Engineering', location_contains: 'london' },
-      DEPTS,
-      OFFICES,
-    );
+    const result = applyJobFilters([a, b], { department: 'Engineering', location_contains: 'london' }, DEPTS, OFFICES);
     expect(result.map(j => j.id)).toEqual([1]);
   });
 
   it('throws validation error on unknown department name', () => {
-    expect(() => applyJobFilters([makeJob({})], { department: 'NoSuch' }, DEPTS, OFFICES)).toThrow(/unknown department/i);
+    expect(() => applyJobFilters([makeJob({})], { department: 'NoSuch' }, DEPTS, OFFICES)).toThrow(
+      /unknown department/i,
+    );
   });
 
   it('throws validation error on unknown office name', () => {

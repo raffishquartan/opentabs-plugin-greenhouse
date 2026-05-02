@@ -4,19 +4,11 @@
 import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('@opentabs-dev/plugin-sdk', () => ({
-  ToolError: class extends Error {
-    static auth(msg: string) {
-      return new this(msg);
-    }
-    static notFound(msg: string) {
-      return new this(msg);
-    }
-    static validation(msg: string) {
-      return new this(msg);
-    }
-    static internal(msg: string) {
-      return new this(msg);
-    }
+  ToolError: {
+    auth: (msg: string) => new Error(msg),
+    notFound: (msg: string) => new Error(msg),
+    validation: (msg: string) => new Error(msg),
+    internal: (msg: string) => new Error(msg),
   },
 }));
 
@@ -92,8 +84,9 @@ describe('OfficesResponseSchema', () => {
 
 describe('fetchJobs', () => {
   it('hits the boards-api jobs endpoint with content=true and parses the response', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(JSON.stringify(jobsFixture), { status: 200, headers: { 'content-type': 'application/json' } }),
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(JSON.stringify(jobsFixture), { status: 200, headers: { 'content-type': 'application/json' } }),
     );
     const result = await fetchJobs('airbnb', fetchImpl);
     expect(fetchImpl).toHaveBeenCalledWith('https://boards-api.greenhouse.io/v1/boards/airbnb/jobs?content=true');
@@ -112,11 +105,12 @@ describe('fetchJobs', () => {
   });
 
   it('throws contract-drift when response shape is wrong', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(JSON.stringify({ jobs: 'not-an-array', meta: { total: 0 } }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ jobs: 'not-an-array', meta: { total: 0 } }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
     );
     await expect(fetchJobs('airbnb', fetchImpl)).rejects.toThrow(/contract drift/i);
   });
@@ -124,8 +118,12 @@ describe('fetchJobs', () => {
 
 describe('fetchJob', () => {
   it('hits the single-job endpoint and parses', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(JSON.stringify(singleJobFixture), { status: 200, headers: { 'content-type': 'application/json' } }),
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(JSON.stringify(singleJobFixture), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
     );
     const result = await fetchJob('airbnb', 7649441, fetchImpl);
     expect(fetchImpl).toHaveBeenCalledWith('https://boards-api.greenhouse.io/v1/boards/airbnb/jobs/7649441');
@@ -135,11 +133,12 @@ describe('fetchJob', () => {
 
 describe('fetchDepartments', () => {
   it('hits the departments endpoint and parses', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(JSON.stringify(departmentsFixture), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      }),
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(JSON.stringify(departmentsFixture), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
     );
     const result = await fetchDepartments('airbnb', fetchImpl);
     expect(fetchImpl).toHaveBeenCalledWith('https://boards-api.greenhouse.io/v1/boards/airbnb/departments');
@@ -149,8 +148,9 @@ describe('fetchDepartments', () => {
 
 describe('fetchOffices', () => {
   it('hits the offices endpoint and parses', async () => {
-    const fetchImpl = vi.fn(async () =>
-      new Response(JSON.stringify(officesFixture), { status: 200, headers: { 'content-type': 'application/json' } }),
+    const fetchImpl = vi.fn(
+      async () =>
+        new Response(JSON.stringify(officesFixture), { status: 200, headers: { 'content-type': 'application/json' } }),
     );
     const result = await fetchOffices('airbnb', fetchImpl);
     expect(fetchImpl).toHaveBeenCalledWith('https://boards-api.greenhouse.io/v1/boards/airbnb/offices');

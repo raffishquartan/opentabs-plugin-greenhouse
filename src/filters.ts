@@ -37,18 +37,14 @@ function findNode(nodes: TreeNode[], match: string | number, kind: 'department' 
   if (typeof match === 'number') {
     const found = nodes.find(n => n.id === match);
     if (!found) {
-      throw ToolError.validation(
-        `Unknown ${kind} id ${match}. Available ids: ${nodes.map(n => n.id).join(', ')}`,
-      );
+      throw ToolError.validation(`Unknown ${kind} id ${match}. Available ids: ${nodes.map(n => n.id).join(', ')}`);
     }
     return found;
   }
   const lc = match.toLowerCase();
   const found = nodes.find(n => n.name.toLowerCase() === lc);
   if (!found) {
-    throw ToolError.validation(
-      `Unknown ${kind} '${match}'. Available: ${nodes.map(n => n.name).join(', ')}`,
-    );
+    throw ToolError.validation(`Unknown ${kind} '${match}'. Available: ${nodes.map(n => n.name).join(', ')}`);
   }
   return found;
 }

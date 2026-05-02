@@ -5,19 +5,11 @@ import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('@opentabs-dev/plugin-sdk', () => ({
   defineTool: (config: unknown) => config,
-  ToolError: class extends Error {
-    static auth(msg: string) {
-      return new this(msg);
-    }
-    static notFound(msg: string) {
-      return new this(msg);
-    }
-    static validation(msg: string) {
-      return new this(msg);
-    }
-    static internal(msg: string) {
-      return new this(msg);
-    }
+  ToolError: {
+    auth: (msg: string) => new Error(msg),
+    notFound: (msg: string) => new Error(msg),
+    validation: (msg: string) => new Error(msg),
+    internal: (msg: string) => new Error(msg),
   },
 }));
 
