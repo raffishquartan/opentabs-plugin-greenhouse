@@ -105,12 +105,34 @@ function defaultFetch(): FetchLike {
   return globalThis.fetch.bind(globalThis);
 }
 
-async function getJson(url: string, fetchImpl: FetchLike, token: string): Promise<unknown> {
+interface CacheEntry {
+  etag?: string;
+  lastModified?: string;
+  body: unknown;
+}
+
+const responseCache = new Map<string, CacheEntry>();
+
+/** Test-only: clear the in-memory response cache. */
+export function __clearApiCache(): void {
+  responseCache.clear();
+}
+
+async function getJson(url: string, fetchImpl: FetchLike, token: string, cacheBypass = false): Promise<unknown> {
+  const cached = cacheBypass ? undefined : responseCache.get(url);
+  const headers: Record<string, string> = {};
+  if (cached?.etag) headers['If-None-Match'] = cached.etag;
+  if (cached?.lastModified) headers['If-Modified-Since'] = cached.lastModified;
+
   let response: Response;
   try {
-    response = await fetchImpl(url);
+    response = await fetchImpl(url, Object.keys(headers).length > 0 ? { headers } : undefined);
   } catch (err) {
     throw ToolError.internal(`Network error contacting Greenhouse API: ${(err as Error).message}`);
+  }
+
+  if (response.status === 304 && cached) {
+    return cached.body;
   }
   if (response.status === 404) {
     throw ToolError.notFound(`Greenhouse board '${token}' not found (404)`);
@@ -120,11 +142,18 @@ async function getJson(url: string, fetchImpl: FetchLike, token: string): Promis
     const excerpt = body.slice(0, 200);
     throw ToolError.internal(`Greenhouse API ${response.status} ${response.statusText}: ${excerpt}`);
   }
+
+  let parsed: unknown;
   try {
-    return await response.json();
+    parsed = await response.json();
   } catch (err) {
     throw ToolError.internal(`Greenhouse API returned non-JSON body: ${(err as Error).message}`);
   }
+
+  const etag = response.headers.get('etag') ?? undefined;
+  const lastModified = response.headers.get('last-modified') ?? undefined;
+  responseCache.set(url, { etag, lastModified, body: parsed });
+  return parsed;
 }
 
 function parseOrDrift<T>(schema: z.ZodType<T>, data: unknown, endpoint: string): T {
@@ -138,29 +167,43 @@ function parseOrDrift<T>(schema: z.ZodType<T>, data: unknown, endpoint: string):
   return result.data;
 }
 
-export async function fetchJobs(token: string, fetchImpl: FetchLike = defaultFetch()): Promise<JobsResponse> {
+export async function fetchJobs(
+  token: string,
+  fetchImpl: FetchLike = defaultFetch(),
+  cacheBypass = false,
+): Promise<JobsResponse> {
   const url = `${API_BASE}/v1/boards/${encodeURIComponent(token)}/jobs?content=true`;
-  const data = await getJson(url, fetchImpl, token);
+  const data = await getJson(url, fetchImpl, token, cacheBypass);
   return parseOrDrift(JobsResponseSchema, data, '/jobs');
 }
 
-export async function fetchJob(token: string, id: number, fetchImpl: FetchLike = defaultFetch()): Promise<Job> {
+export async function fetchJob(
+  token: string,
+  id: number,
+  fetchImpl: FetchLike = defaultFetch(),
+  cacheBypass = false,
+): Promise<Job> {
   const url = `${API_BASE}/v1/boards/${encodeURIComponent(token)}/jobs/${id}`;
-  const data = await getJson(url, fetchImpl, token);
+  const data = await getJson(url, fetchImpl, token, cacheBypass);
   return parseOrDrift(JobSchema, data, `/jobs/${id}`);
 }
 
 export async function fetchDepartments(
   token: string,
   fetchImpl: FetchLike = defaultFetch(),
+  cacheBypass = false,
 ): Promise<DepartmentsResponse> {
   const url = `${API_BASE}/v1/boards/${encodeURIComponent(token)}/departments`;
-  const data = await getJson(url, fetchImpl, token);
+  const data = await getJson(url, fetchImpl, token, cacheBypass);
   return parseOrDrift(DepartmentsResponseSchema, data, '/departments');
 }
 
-export async function fetchOffices(token: string, fetchImpl: FetchLike = defaultFetch()): Promise<OfficesResponse> {
+export async function fetchOffices(
+  token: string,
+  fetchImpl: FetchLike = defaultFetch(),
+  cacheBypass = false,
+): Promise<OfficesResponse> {
   const url = `${API_BASE}/v1/boards/${encodeURIComponent(token)}/offices`;
-  const data = await getJson(url, fetchImpl, token);
+  const data = await getJson(url, fetchImpl, token, cacheBypass);
   return parseOrDrift(OfficesResponseSchema, data, '/offices');
 }

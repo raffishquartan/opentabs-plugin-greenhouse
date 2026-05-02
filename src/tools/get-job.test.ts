@@ -47,6 +47,6 @@ describe('runGetJob', () => {
       { id: 7649441 },
       { fetchImpl, currentUrl: 'https://job-boards.eu.greenhouse.io/airbnb/jobs/7649441' },
     );
-    expect(fetchImpl).toHaveBeenCalledWith('https://boards-api.greenhouse.io/v1/boards/airbnb/jobs/7649441');
+    expect(fetchImpl.mock.calls[0]?.[0]).toBe('https://boards-api.greenhouse.io/v1/boards/airbnb/jobs/7649441');
   });
 });
