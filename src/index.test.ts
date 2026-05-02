@@ -46,10 +46,12 @@ describe('GreenhousePlugin', () => {
     }
   });
 
-  it('exposes list_jobs and get_job', () => {
+  it('exposes list_jobs, get_job, list_departments and list_offices', () => {
     const names = plugin.tools.map((t: { name: string }) => t.name);
     expect(names).toContain('list_jobs');
     expect(names).toContain('get_job');
+    expect(names).toContain('list_departments');
+    expect(names).toContain('list_offices');
   });
 
   it('no tool name uses a banned write-verb prefix', () => {
