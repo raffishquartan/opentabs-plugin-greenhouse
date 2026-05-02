@@ -149,6 +149,19 @@ describe('applyJobFilters', () => {
   it('throws validation error on unknown office name', () => {
     expect(() => applyJobFilters([makeJob({})], { office: 'NoSuch' }, DEPTS, OFFICES)).toThrow(/unknown office/i);
   });
+
+  it('filters by workplace_type from metadata (case-insensitive)', () => {
+    const remote = makeJob({
+      id: 1,
+      metadata: [{ id: 1, name: 'Workplace Type', value: 'Remote', value_type: 'single_select' }],
+    } as never);
+    const hybrid = makeJob({
+      id: 2,
+      metadata: [{ id: 2, name: 'Workplace Type', value: 'Hybrid', value_type: 'single_select' }],
+    } as never);
+    const result = applyJobFilters([remote, hybrid], { workplace_type: 'remote' }, DEPTS, OFFICES);
+    expect(result.map(j => j.id)).toEqual([1]);
+  });
 });
 
 describe('descendantIds', () => {

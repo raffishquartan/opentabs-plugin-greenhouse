@@ -7,6 +7,7 @@ import { fetchJob } from '../api.js';
 import type { FetchLike } from '../api.js';
 import { resolveBoardToken } from '../board.js';
 import { htmlToMarkdown } from '../markdown.js';
+import { extractSalaryRange, extractWorkplaceType } from '../metadata.js';
 
 const InputSchema = z.object({
   id: z.number().describe('The numeric Greenhouse job id (e.g. 7649441).'),
@@ -18,6 +19,14 @@ const InputSchema = z.object({
 
 const RefSchema = z.object({ id: z.number(), name: z.string() });
 
+const SalaryRangeSchema = z.object({
+  min: z.string(),
+  max: z.string(),
+  currency: z.string().nullable(),
+  period: z.string().nullable(),
+  raw: z.string(),
+});
+
 const OutputSchema = z.object({
   id: z.number(),
   title: z.string(),
@@ -27,6 +36,8 @@ const OutputSchema = z.object({
   absolute_url: z.string(),
   updated_at: z.string(),
   first_published: z.string(),
+  workplace_type: z.string().nullable().describe('Workplace type extracted from metadata, or null if not provided.'),
+  salary_range: SalaryRangeSchema.nullable().describe('Best-effort salary range extracted from the description body, or null if absent.'),
   content_markdown: z.string().describe('Job description converted from HTML to markdown.'),
   metadata: z.array(z.unknown()).describe('Greenhouse job metadata fields verbatim from the API.'),
 });
@@ -51,6 +62,8 @@ export async function runGetJob(input: GetJobInput, deps: GetJobDeps = {}): Prom
     absolute_url: job.absolute_url,
     updated_at: job.updated_at,
     first_published: job.first_published,
+    workplace_type: extractWorkplaceType(job),
+    salary_range: extractSalaryRange(job.content),
     content_markdown: htmlToMarkdown(job.content),
     metadata: job.metadata ?? [],
   };

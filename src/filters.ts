@@ -3,6 +3,7 @@
 
 import { ToolError } from '@opentabs-dev/plugin-sdk';
 import type { Department, Job, Office } from './api.js';
+import { extractWorkplaceType } from './metadata.js';
 
 export interface JobFilters {
   department?: string | number;
@@ -10,6 +11,7 @@ export interface JobFilters {
   location_contains?: string;
   title_contains?: string;
   updated_after?: string;
+  workplace_type?: string;
 }
 
 interface TreeNode {
@@ -77,6 +79,11 @@ export function applyJobFilters(jobs: Job[], filters: JobFilters, depts: Departm
   if (filters.updated_after) {
     const cutoff = filters.updated_after;
     out = out.filter(j => j.updated_at >= cutoff);
+  }
+
+  if (filters.workplace_type) {
+    const lc = filters.workplace_type.toLowerCase();
+    out = out.filter(j => extractWorkplaceType(j)?.toLowerCase() === lc);
   }
 
   return out;

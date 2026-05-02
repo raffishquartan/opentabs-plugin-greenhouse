@@ -7,6 +7,7 @@ import { fetchDepartments, fetchJobs, fetchOffices } from '../api.js';
 import type { FetchLike, Job } from '../api.js';
 import { resolveBoardToken } from '../board.js';
 import { applyJobFilters } from '../filters.js';
+import { extractWorkplaceType } from '../metadata.js';
 
 const InputSchema = z.object({
   board: z
@@ -31,6 +32,10 @@ const InputSchema = z.object({
     .string()
     .optional()
     .describe('ISO-8601 timestamp; only jobs with updated_at >= this value are returned.'),
+  workplace_type: z
+    .string()
+    .optional()
+    .describe('Filter by workplace type from job metadata: "Remote", "Hybrid", "Onsite", etc. Case-insensitive exact.'),
 });
 
 const JobSummarySchema = z.object({
@@ -41,6 +46,10 @@ const JobSummarySchema = z.object({
   departments: z.array(z.string()),
   absolute_url: z.string(),
   updated_at: z.string(),
+  workplace_type: z
+    .string()
+    .nullable()
+    .describe('Workplace type extracted from job metadata, or null if not provided.'),
 });
 
 const OutputSchema = z.object({
@@ -66,6 +75,7 @@ function summarise(jobs: Job[]): ListJobsOutput['jobs'] {
     departments: j.departments.map(d => d.name),
     absolute_url: j.absolute_url,
     updated_at: j.updated_at,
+    workplace_type: extractWorkplaceType(j),
   }));
 }
 
@@ -84,6 +94,7 @@ export async function runListJobs(input: ListJobsInput, deps: ListJobsDeps = {})
       location_contains: input.location_contains,
       title_contains: input.title_contains,
       updated_after: input.updated_after,
+      workplace_type: input.workplace_type,
     },
     departmentsResponse.departments,
     officesResponse.offices,
