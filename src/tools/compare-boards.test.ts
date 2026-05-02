@@ -32,10 +32,7 @@ function makeFetch(opts: { failBoard?: string } = {}) {
 
 describe('runCompareBoards', () => {
   it('sweeps multiple boards and returns per-board results', async () => {
-    const result = await runCompareBoards(
-      { boards: ['airbnb', 'stripe'] },
-      { fetchImpl: makeFetch() },
-    );
+    const result = await runCompareBoards({ boards: ['airbnb', 'stripe'] }, { fetchImpl: makeFetch() });
     expect(result.boards).toHaveLength(2);
     expect(result.boards.every(b => b.ok)).toBe(true);
     expect(result.total_across_boards).toBe(10); // 5 from each fixture

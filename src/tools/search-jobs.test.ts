@@ -30,10 +30,7 @@ describe('runSearchJobs', () => {
   it('matches against the description body when no other field matches', async () => {
     const fetchImpl = fetchOk();
     // pick a phrase that appears in the airbnb sample content body but not in titles/depts/offices/locations
-    const result = await runSearchJobs(
-      { board: 'airbnb', query: 'San Francisco' },
-      { fetchImpl },
-    );
+    const result = await runSearchJobs({ board: 'airbnb', query: 'San Francisco' }, { fetchImpl });
     expect(result.total).toBeGreaterThan(0);
     expect(result.jobs[0]?.matched_in).toContain('content');
   });

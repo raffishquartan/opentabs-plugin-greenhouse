@@ -1,0 +1,29 @@
+# Continuous integration: build + typecheck + lint + format + offline tests.
+# Runs on every PR and on every push to main. Fast (~30s typical).
+
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build + typecheck + lint + format
+        run: npm run check
+
+      - name: Run offline tests
+        run: npm test

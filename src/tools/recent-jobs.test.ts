@@ -37,10 +37,7 @@ describe('runRecentJobs', () => {
   });
 
   it('filters by since (ISO timestamp)', async () => {
-    const result = await runRecentJobs(
-      { board: 'airbnb', since: '2099-01-01T00:00:00Z' },
-      { fetchImpl: fetchOk() },
-    );
+    const result = await runRecentJobs({ board: 'airbnb', since: '2099-01-01T00:00:00Z' }, { fetchImpl: fetchOk() });
     expect(result.jobs).toHaveLength(0);
   });
 

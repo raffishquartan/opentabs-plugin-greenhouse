@@ -10,7 +10,10 @@ import { extractWorkplaceType } from '../metadata.js';
 
 const InputSchema = z.object({
   board: z.string().optional().describe('Board token or full job-board URL. Optional.'),
-  since: z.string().optional().describe('ISO-8601 timestamp; only jobs with first_published >= this value are returned.'),
+  since: z
+    .string()
+    .optional()
+    .describe('ISO-8601 timestamp; only jobs with first_published >= this value are returned.'),
   limit: z.number().int().positive().max(500).optional().describe('Maximum number of jobs to return. Defaults to all.'),
 });
 
@@ -40,13 +43,12 @@ export interface RecentJobsDeps {
   currentUrl?: string;
 }
 
-export async function runRecentJobs(
-  input: RecentJobsInput,
-  deps: RecentJobsDeps = {},
-): Promise<RecentJobsOutput> {
+export async function runRecentJobs(input: RecentJobsInput, deps: RecentJobsDeps = {}): Promise<RecentJobsOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const data = await fetchJobs(token, deps.fetchImpl);
-  let jobs = [...data.jobs].sort((a, b) => (a.first_published > b.first_published ? -1 : a.first_published < b.first_published ? 1 : 0));
+  let jobs = [...data.jobs].sort((a, b) =>
+    a.first_published > b.first_published ? -1 : a.first_published < b.first_published ? 1 : 0,
+  );
   if (input.since) {
     const cutoff = input.since;
     jobs = jobs.filter(j => j.first_published >= cutoff);

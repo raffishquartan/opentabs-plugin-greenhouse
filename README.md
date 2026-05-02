@@ -1,5 +1,8 @@
 # opentabs-plugin-greenhouse
 
+[![check](https://github.com/raffishquartan/opentabs-plugin-greenhouse/actions/workflows/check.yml/badge.svg)](https://github.com/raffishquartan/opentabs-plugin-greenhouse/actions/workflows/check.yml)
+[![live-api-canary](https://github.com/raffishquartan/opentabs-plugin-greenhouse/actions/workflows/live-api-canary.yml/badge.svg)](https://github.com/raffishquartan/opentabs-plugin-greenhouse/actions/workflows/live-api-canary.yml)
+
 An [OpenTabs](https://opentabs.dev) plugin that exposes read-only tools over the
 public [Greenhouse](https://www.greenhouse.io) Job Board API. Lets an AI agent or other
 client list, filter and inspect openings on any company's public Greenhouse-hosted job

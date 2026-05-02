@@ -37,7 +37,9 @@ const OutputSchema = z.object({
   updated_at: z.string(),
   first_published: z.string(),
   workplace_type: z.string().nullable().describe('Workplace type extracted from metadata, or null if not provided.'),
-  salary_range: SalaryRangeSchema.nullable().describe('Best-effort salary range extracted from the description body, or null if absent.'),
+  salary_range: SalaryRangeSchema.nullable().describe(
+    'Best-effort salary range extracted from the description body, or null if absent.',
+  ),
   content_markdown: z.string().describe('Job description converted from HTML to markdown.'),
   metadata: z.array(z.unknown()).describe('Greenhouse job metadata fields verbatim from the API.'),
 });
