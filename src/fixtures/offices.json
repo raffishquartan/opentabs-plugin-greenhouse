@@ -1,0 +1,2754 @@
+{
+  "offices": [
+    {
+      "id": 17515,
+      "name": "AMER",
+      "location": null,
+      "parent_id": null,
+      "child_ids": [
+        64283,
+        63868,
+        23350,
+        1170,
+        87315,
+        87306,
+        78632,
+        88158,
+        4447,
+        87316,
+        258081,
+        5925,
+        87312,
+        211524,
+        5924,
+        246412,
+        88161,
+        1316,
+        87311,
+        258083,
+        1086,
+        241531,
+        62444,
+        87307,
+        80804,
+        88159,
+        258082,
+        104152,
+        1355,
+        85791,
+        87313,
+        87308,
+        109320,
+        85003,
+        162,
+        55,
+        62810,
+        12964,
+        87314,
+        88160,
+        87310,
+        104153,
+        11235,
+        108489,
+        87309
+      ],
+      "departments": [
+        {
+          "id": 60966,
+          "name": "1. Technical",
+          "parent_id": null,
+          "child_ids": [
+            85549,
+            73701,
+            73703,
+            256,
+            250,
+            10854,
+            252,
+            73674,
+            284956,
+            77,
+            73675
+          ],
+          "jobs": []
+        },
+        {
+          "id": 60666,
+          "name": "2. Business",
+          "parent_id": null,
+          "child_ids": [
+            85346,
+            73695,
+            73694,
+            73696,
+            73692,
+            73698,
+            73691,
+            73697,
+            73680,
+            73681,
+            378,
+            251,
+            73677,
+            76,
+            73679,
+            73678,
+            73682,
+            73683,
+            253,
+            5600,
+            6427,
+            294484,
+            309,
+            254,
+            73686,
+            249,
+            1394,
+            5601,
+            247,
+            73676,
+            57796,
+            73685,
+            73684
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73248,
+          "name": "3. Independent Team",
+          "parent_id": null,
+          "child_ids": [
+            73249,
+            73700,
+            91679,
+            151522,
+            47140,
+            255,
+            6673,
+            73689,
+            73690,
+            73688,
+            73687
+          ],
+          "jobs": []
+        },
+        {
+          "id": 76314,
+          "name": "4. Prospecting (DONOTUSE)",
+          "parent_id": null,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73677,
+          "name": "Accounting",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73686,
+          "name": "Administrative",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 85346,
+          "name": "Analytics",
+          "parent_id": 60666,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73689,
+          "name": "Apprenticeship",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 6427,
+          "name": "Art and Creative",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 247,
+          "name": "Business Development",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73685,
+          "name": "Business Operations/Analysis",
+          "parent_id": 73697,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73682,
+          "name": "Communications",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 294484,
+          "name": "Community",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 249,
+          "name": "Community Support",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73680,
+          "name": "Compensation",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73683,
+          "name": "Compliance",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 85549,
+          "name": "Data Science",
+          "parent_id": 60966,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 250,
+          "name": "Design",
+          "parent_id": 73701,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73701,
+          "name": "Design & Research",
+          "parent_id": 60966,
+          "child_ids": [
+            250,
+            10854
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73249,
+          "name": "[DNU] Airbnb Capability Center",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73700,
+          "name": "Early Career Programs",
+          "parent_id": 73248,
+          "child_ids": [
+            73689,
+            73690,
+            73688,
+            73687
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73695,
+          "name": "Employee Experience",
+          "parent_id": 60666,
+          "child_ids": [
+            73680,
+            73681,
+            378,
+            251
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73703,
+          "name": "Engineering & Technology",
+          "parent_id": 60966,
+          "child_ids": [
+            252,
+            73674,
+            284956,
+            77,
+            73675
+          ],
+          "jobs": []
+        },
+        {
+          "id": 91679,
+          "name": "Executive, All Functions",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73681,
+          "name": "Facilities",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73690,
+          "name": "Fellows",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73694,
+          "name": "Finance & Accounting",
+          "parent_id": 60666,
+          "child_ids": [
+            73677,
+            76,
+            73679,
+            73678
+          ],
+          "jobs": []
+        },
+        {
+          "id": 76,
+          "name": "Financial Planning and Analysis",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 252,
+          "name": "Information Technology",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73688,
+          "name": "Intern",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 151522,
+          "name": "[Internal] Global Mobility Only",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 253,
+          "name": "Legal",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73696,
+          "name": "Legal & Communications",
+          "parent_id": 60666,
+          "child_ids": [
+            73682,
+            73683,
+            253,
+            5600
+          ],
+          "jobs": []
+        },
+        {
+          "id": 309,
+          "name": "Localization",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 47140,
+          "name": "Luxury Retreats",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 254,
+          "name": "Marketing",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73692,
+          "name": "Marketing & Creative",
+          "parent_id": 60666,
+          "child_ids": [
+            6427,
+            294484,
+            309,
+            254
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73687,
+          "name": "New Grad",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73674,
+          "name": "Non-Software Engineering",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 1394,
+          "name": "Operations",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73698,
+          "name": "Operations & Support",
+          "parent_id": 60666,
+          "child_ids": [
+            73686,
+            249,
+            1394,
+            5601
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73676,
+          "name": "Partnerships",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 378,
+          "name": "People",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 255,
+          "name": "Photography",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 256,
+          "name": "Product Management",
+          "parent_id": 60966,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73684,
+          "name": "Program Management",
+          "parent_id": 73697,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 5600,
+          "name": "Public Policy",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73679,
+          "name": "Real Estate",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 251,
+          "name": "Recruiting",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 10854,
+          "name": "Research",
+          "parent_id": 73701,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 57796,
+          "name": "Sales",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73691,
+          "name": "Sales & Partnerships",
+          "parent_id": 60666,
+          "child_ids": [
+            247,
+            73676,
+            57796
+          ],
+          "jobs": []
+        },
+        {
+          "id": 284956,
+          "name": "Security",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 77,
+          "name": "Software Engineering",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73697,
+          "name": "Strategy & Planning",
+          "parent_id": 60666,
+          "child_ids": [
+            73685,
+            73684
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73675,
+          "name": "Technical Program Management",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 6673,
+          "name": "Temp Internal Only",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73678,
+          "name": "Treasury",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 5601,
+          "name": "Trust and Safety",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 0,
+          "name": "No Department",
+          "parent_id": null,
+          "child_ids": [],
+          "jobs": []
+        }
+      ]
+    },
+    {
+      "id": 7425,
+      "name": "Amsterdam, Netherlands",
+      "location": "Amsterdam, Netherlands",
+      "parent_id": 64285,
+      "child_ids": [],
+      "departments": [
+        {
+          "id": 60966,
+          "name": "1. Technical",
+          "parent_id": null,
+          "child_ids": [
+            85549,
+            73701,
+            73703,
+            256,
+            250,
+            10854,
+            252,
+            73674,
+            284956,
+            77,
+            73675
+          ],
+          "jobs": []
+        },
+        {
+          "id": 60666,
+          "name": "2. Business",
+          "parent_id": null,
+          "child_ids": [
+            85346,
+            73695,
+            73694,
+            73696,
+            73692,
+            73698,
+            73691,
+            73697,
+            73680,
+            73681,
+            378,
+            251,
+            73677,
+            76,
+            73679,
+            73678,
+            73682,
+            73683,
+            253,
+            5600,
+            6427,
+            294484,
+            309,
+            254,
+            73686,
+            249,
+            1394,
+            5601,
+            247,
+            73676,
+            57796,
+            73685,
+            73684
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73248,
+          "name": "3. Independent Team",
+          "parent_id": null,
+          "child_ids": [
+            73249,
+            73700,
+            91679,
+            151522,
+            47140,
+            255,
+            6673,
+            73689,
+            73690,
+            73688,
+            73687
+          ],
+          "jobs": []
+        },
+        {
+          "id": 76314,
+          "name": "4. Prospecting (DONOTUSE)",
+          "parent_id": null,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73677,
+          "name": "Accounting",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73686,
+          "name": "Administrative",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 85346,
+          "name": "Analytics",
+          "parent_id": 60666,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73689,
+          "name": "Apprenticeship",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 6427,
+          "name": "Art and Creative",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 247,
+          "name": "Business Development",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73685,
+          "name": "Business Operations/Analysis",
+          "parent_id": 73697,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73682,
+          "name": "Communications",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 294484,
+          "name": "Community",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 249,
+          "name": "Community Support",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73680,
+          "name": "Compensation",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73683,
+          "name": "Compliance",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 85549,
+          "name": "Data Science",
+          "parent_id": 60966,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 250,
+          "name": "Design",
+          "parent_id": 73701,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73701,
+          "name": "Design & Research",
+          "parent_id": 60966,
+          "child_ids": [
+            250,
+            10854
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73249,
+          "name": "[DNU] Airbnb Capability Center",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73700,
+          "name": "Early Career Programs",
+          "parent_id": 73248,
+          "child_ids": [
+            73689,
+            73690,
+            73688,
+            73687
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73695,
+          "name": "Employee Experience",
+          "parent_id": 60666,
+          "child_ids": [
+            73680,
+            73681,
+            378,
+            251
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73703,
+          "name": "Engineering & Technology",
+          "parent_id": 60966,
+          "child_ids": [
+            252,
+            73674,
+            284956,
+            77,
+            73675
+          ],
+          "jobs": []
+        },
+        {
+          "id": 91679,
+          "name": "Executive, All Functions",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73681,
+          "name": "Facilities",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73690,
+          "name": "Fellows",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73694,
+          "name": "Finance & Accounting",
+          "parent_id": 60666,
+          "child_ids": [
+            73677,
+            76,
+            73679,
+            73678
+          ],
+          "jobs": []
+        },
+        {
+          "id": 76,
+          "name": "Financial Planning and Analysis",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 252,
+          "name": "Information Technology",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73688,
+          "name": "Intern",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 151522,
+          "name": "[Internal] Global Mobility Only",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 253,
+          "name": "Legal",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73696,
+          "name": "Legal & Communications",
+          "parent_id": 60666,
+          "child_ids": [
+            73682,
+            73683,
+            253,
+            5600
+          ],
+          "jobs": []
+        },
+        {
+          "id": 309,
+          "name": "Localization",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 47140,
+          "name": "Luxury Retreats",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 254,
+          "name": "Marketing",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73692,
+          "name": "Marketing & Creative",
+          "parent_id": 60666,
+          "child_ids": [
+            6427,
+            294484,
+            309,
+            254
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73687,
+          "name": "New Grad",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73674,
+          "name": "Non-Software Engineering",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 1394,
+          "name": "Operations",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73698,
+          "name": "Operations & Support",
+          "parent_id": 60666,
+          "child_ids": [
+            73686,
+            249,
+            1394,
+            5601
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73676,
+          "name": "Partnerships",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 378,
+          "name": "People",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 255,
+          "name": "Photography",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 256,
+          "name": "Product Management",
+          "parent_id": 60966,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73684,
+          "name": "Program Management",
+          "parent_id": 73697,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 5600,
+          "name": "Public Policy",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73679,
+          "name": "Real Estate",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 251,
+          "name": "Recruiting",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 10854,
+          "name": "Research",
+          "parent_id": 73701,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 57796,
+          "name": "Sales",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73691,
+          "name": "Sales & Partnerships",
+          "parent_id": 60666,
+          "child_ids": [
+            247,
+            73676,
+            57796
+          ],
+          "jobs": []
+        },
+        {
+          "id": 284956,
+          "name": "Security",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 77,
+          "name": "Software Engineering",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73697,
+          "name": "Strategy & Planning",
+          "parent_id": 60666,
+          "child_ids": [
+            73685,
+            73684
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73675,
+          "name": "Technical Program Management",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 6673,
+          "name": "Temp Internal Only",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73678,
+          "name": "Treasury",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 5601,
+          "name": "Trust and Safety",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 0,
+          "name": "No Department",
+          "parent_id": null,
+          "child_ids": [],
+          "jobs": []
+        }
+      ]
+    },
+    {
+      "id": 17517,
+      "name": "APAC",
+      "location": null,
+      "parent_id": null,
+      "child_ids": [
+        64277,
+        64270,
+        64272,
+        64274,
+        64276,
+        64278,
+        64275,
+        64273,
+        64271,
+        207130,
+        207132,
+        207131,
+        149,
+        207133,
+        1611,
+        66101,
+        23356,
+        23355,
+        66097,
+        23354,
+        304702,
+        66098,
+        66099,
+        66100,
+        23353,
+        66102,
+        75876,
+        75875,
+        479,
+        625,
+        58107,
+        148,
+        626,
+        62968,
+        62970,
+        62969
+      ],
+      "departments": [
+        {
+          "id": 60966,
+          "name": "1. Technical",
+          "parent_id": null,
+          "child_ids": [
+            85549,
+            73701,
+            73703,
+            256,
+            250,
+            10854,
+            252,
+            73674,
+            284956,
+            77,
+            73675
+          ],
+          "jobs": []
+        },
+        {
+          "id": 60666,
+          "name": "2. Business",
+          "parent_id": null,
+          "child_ids": [
+            85346,
+            73695,
+            73694,
+            73696,
+            73692,
+            73698,
+            73691,
+            73697,
+            73680,
+            73681,
+            378,
+            251,
+            73677,
+            76,
+            73679,
+            73678,
+            73682,
+            73683,
+            253,
+            5600,
+            6427,
+            294484,
+            309,
+            254,
+            73686,
+            249,
+            1394,
+            5601,
+            247,
+            73676,
+            57796,
+            73685,
+            73684
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73248,
+          "name": "3. Independent Team",
+          "parent_id": null,
+          "child_ids": [
+            73249,
+            73700,
+            91679,
+            151522,
+            47140,
+            255,
+            6673,
+            73689,
+            73690,
+            73688,
+            73687
+          ],
+          "jobs": []
+        },
+        {
+          "id": 76314,
+          "name": "4. Prospecting (DONOTUSE)",
+          "parent_id": null,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73677,
+          "name": "Accounting",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73686,
+          "name": "Administrative",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 85346,
+          "name": "Analytics",
+          "parent_id": 60666,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73689,
+          "name": "Apprenticeship",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 6427,
+          "name": "Art and Creative",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 247,
+          "name": "Business Development",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73685,
+          "name": "Business Operations/Analysis",
+          "parent_id": 73697,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73682,
+          "name": "Communications",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 294484,
+          "name": "Community",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 249,
+          "name": "Community Support",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73680,
+          "name": "Compensation",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73683,
+          "name": "Compliance",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 85549,
+          "name": "Data Science",
+          "parent_id": 60966,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 250,
+          "name": "Design",
+          "parent_id": 73701,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73701,
+          "name": "Design & Research",
+          "parent_id": 60966,
+          "child_ids": [
+            250,
+            10854
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73249,
+          "name": "[DNU] Airbnb Capability Center",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73700,
+          "name": "Early Career Programs",
+          "parent_id": 73248,
+          "child_ids": [
+            73689,
+            73690,
+            73688,
+            73687
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73695,
+          "name": "Employee Experience",
+          "parent_id": 60666,
+          "child_ids": [
+            73680,
+            73681,
+            378,
+            251
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73703,
+          "name": "Engineering & Technology",
+          "parent_id": 60966,
+          "child_ids": [
+            252,
+            73674,
+            284956,
+            77,
+            73675
+          ],
+          "jobs": []
+        },
+        {
+          "id": 91679,
+          "name": "Executive, All Functions",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73681,
+          "name": "Facilities",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73690,
+          "name": "Fellows",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73694,
+          "name": "Finance & Accounting",
+          "parent_id": 60666,
+          "child_ids": [
+            73677,
+            76,
+            73679,
+            73678
+          ],
+          "jobs": []
+        },
+        {
+          "id": 76,
+          "name": "Financial Planning and Analysis",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 252,
+          "name": "Information Technology",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73688,
+          "name": "Intern",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 151522,
+          "name": "[Internal] Global Mobility Only",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 253,
+          "name": "Legal",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73696,
+          "name": "Legal & Communications",
+          "parent_id": 60666,
+          "child_ids": [
+            73682,
+            73683,
+            253,
+            5600
+          ],
+          "jobs": []
+        },
+        {
+          "id": 309,
+          "name": "Localization",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 47140,
+          "name": "Luxury Retreats",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 254,
+          "name": "Marketing",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73692,
+          "name": "Marketing & Creative",
+          "parent_id": 60666,
+          "child_ids": [
+            6427,
+            294484,
+            309,
+            254
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73687,
+          "name": "New Grad",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73674,
+          "name": "Non-Software Engineering",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 1394,
+          "name": "Operations",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73698,
+          "name": "Operations & Support",
+          "parent_id": 60666,
+          "child_ids": [
+            73686,
+            249,
+            1394,
+            5601
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73676,
+          "name": "Partnerships",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 378,
+          "name": "People",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 255,
+          "name": "Photography",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 256,
+          "name": "Product Management",
+          "parent_id": 60966,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73684,
+          "name": "Program Management",
+          "parent_id": 73697,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 5600,
+          "name": "Public Policy",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73679,
+          "name": "Real Estate",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 251,
+          "name": "Recruiting",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 10854,
+          "name": "Research",
+          "parent_id": 73701,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 57796,
+          "name": "Sales",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73691,
+          "name": "Sales & Partnerships",
+          "parent_id": 60666,
+          "child_ids": [
+            247,
+            73676,
+            57796
+          ],
+          "jobs": []
+        },
+        {
+          "id": 284956,
+          "name": "Security",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 77,
+          "name": "Software Engineering",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73697,
+          "name": "Strategy & Planning",
+          "parent_id": 60666,
+          "child_ids": [
+            73685,
+            73684
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73675,
+          "name": "Technical Program Management",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 6673,
+          "name": "Temp Internal Only",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73678,
+          "name": "Treasury",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 5601,
+          "name": "Trust and Safety",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 0,
+          "name": "No Department",
+          "parent_id": null,
+          "child_ids": [],
+          "jobs": []
+        }
+      ]
+    },
+    {
+      "id": 63871,
+      "name": "Argentina",
+      "location": null,
+      "parent_id": 63606,
+      "child_ids": [
+        22296
+      ],
+      "departments": [
+        {
+          "id": 60966,
+          "name": "1. Technical",
+          "parent_id": null,
+          "child_ids": [
+            85549,
+            73701,
+            73703,
+            256,
+            250,
+            10854,
+            252,
+            73674,
+            284956,
+            77,
+            73675
+          ],
+          "jobs": []
+        },
+        {
+          "id": 60666,
+          "name": "2. Business",
+          "parent_id": null,
+          "child_ids": [
+            85346,
+            73695,
+            73694,
+            73696,
+            73692,
+            73698,
+            73691,
+            73697,
+            73680,
+            73681,
+            378,
+            251,
+            73677,
+            76,
+            73679,
+            73678,
+            73682,
+            73683,
+            253,
+            5600,
+            6427,
+            294484,
+            309,
+            254,
+            73686,
+            249,
+            1394,
+            5601,
+            247,
+            73676,
+            57796,
+            73685,
+            73684
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73248,
+          "name": "3. Independent Team",
+          "parent_id": null,
+          "child_ids": [
+            73249,
+            73700,
+            91679,
+            151522,
+            47140,
+            255,
+            6673,
+            73689,
+            73690,
+            73688,
+            73687
+          ],
+          "jobs": []
+        },
+        {
+          "id": 76314,
+          "name": "4. Prospecting (DONOTUSE)",
+          "parent_id": null,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73677,
+          "name": "Accounting",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73686,
+          "name": "Administrative",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 85346,
+          "name": "Analytics",
+          "parent_id": 60666,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73689,
+          "name": "Apprenticeship",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 6427,
+          "name": "Art and Creative",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 247,
+          "name": "Business Development",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73685,
+          "name": "Business Operations/Analysis",
+          "parent_id": 73697,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73682,
+          "name": "Communications",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 294484,
+          "name": "Community",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 249,
+          "name": "Community Support",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73680,
+          "name": "Compensation",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73683,
+          "name": "Compliance",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 85549,
+          "name": "Data Science",
+          "parent_id": 60966,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 250,
+          "name": "Design",
+          "parent_id": 73701,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73701,
+          "name": "Design & Research",
+          "parent_id": 60966,
+          "child_ids": [
+            250,
+            10854
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73249,
+          "name": "[DNU] Airbnb Capability Center",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73700,
+          "name": "Early Career Programs",
+          "parent_id": 73248,
+          "child_ids": [
+            73689,
+            73690,
+            73688,
+            73687
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73695,
+          "name": "Employee Experience",
+          "parent_id": 60666,
+          "child_ids": [
+            73680,
+            73681,
+            378,
+            251
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73703,
+          "name": "Engineering & Technology",
+          "parent_id": 60966,
+          "child_ids": [
+            252,
+            73674,
+            284956,
+            77,
+            73675
+          ],
+          "jobs": []
+        },
+        {
+          "id": 91679,
+          "name": "Executive, All Functions",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73681,
+          "name": "Facilities",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73690,
+          "name": "Fellows",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73694,
+          "name": "Finance & Accounting",
+          "parent_id": 60666,
+          "child_ids": [
+            73677,
+            76,
+            73679,
+            73678
+          ],
+          "jobs": []
+        },
+        {
+          "id": 76,
+          "name": "Financial Planning and Analysis",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 252,
+          "name": "Information Technology",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73688,
+          "name": "Intern",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 151522,
+          "name": "[Internal] Global Mobility Only",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 253,
+          "name": "Legal",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73696,
+          "name": "Legal & Communications",
+          "parent_id": 60666,
+          "child_ids": [
+            73682,
+            73683,
+            253,
+            5600
+          ],
+          "jobs": []
+        },
+        {
+          "id": 309,
+          "name": "Localization",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 47140,
+          "name": "Luxury Retreats",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 254,
+          "name": "Marketing",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73692,
+          "name": "Marketing & Creative",
+          "parent_id": 60666,
+          "child_ids": [
+            6427,
+            294484,
+            309,
+            254
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73687,
+          "name": "New Grad",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73674,
+          "name": "Non-Software Engineering",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 1394,
+          "name": "Operations",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73698,
+          "name": "Operations & Support",
+          "parent_id": 60666,
+          "child_ids": [
+            73686,
+            249,
+            1394,
+            5601
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73676,
+          "name": "Partnerships",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 378,
+          "name": "People",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 255,
+          "name": "Photography",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 256,
+          "name": "Product Management",
+          "parent_id": 60966,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73684,
+          "name": "Program Management",
+          "parent_id": 73697,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 5600,
+          "name": "Public Policy",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73679,
+          "name": "Real Estate",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 251,
+          "name": "Recruiting",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 10854,
+          "name": "Research",
+          "parent_id": 73701,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 57796,
+          "name": "Sales",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73691,
+          "name": "Sales & Partnerships",
+          "parent_id": 60666,
+          "child_ids": [
+            247,
+            73676,
+            57796
+          ],
+          "jobs": []
+        },
+        {
+          "id": 284956,
+          "name": "Security",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 77,
+          "name": "Software Engineering",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73697,
+          "name": "Strategy & Planning",
+          "parent_id": 60666,
+          "child_ids": [
+            73685,
+            73684
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73675,
+          "name": "Technical Program Management",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 6673,
+          "name": "Temp Internal Only",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73678,
+          "name": "Treasury",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 5601,
+          "name": "Trust and Safety",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 0,
+          "name": "No Department",
+          "parent_id": null,
+          "child_ids": [],
+          "jobs": []
+        }
+      ]
+    },
+    {
+      "id": 87315,
+      "name": "Arizona, United States",
+      "location": null,
+      "parent_id": 63868,
+      "child_ids": [],
+      "departments": [
+        {
+          "id": 60966,
+          "name": "1. Technical",
+          "parent_id": null,
+          "child_ids": [
+            85549,
+            73701,
+            73703,
+            256,
+            250,
+            10854,
+            252,
+            73674,
+            284956,
+            77,
+            73675
+          ],
+          "jobs": []
+        },
+        {
+          "id": 60666,
+          "name": "2. Business",
+          "parent_id": null,
+          "child_ids": [
+            85346,
+            73695,
+            73694,
+            73696,
+            73692,
+            73698,
+            73691,
+            73697,
+            73680,
+            73681,
+            378,
+            251,
+            73677,
+            76,
+            73679,
+            73678,
+            73682,
+            73683,
+            253,
+            5600,
+            6427,
+            294484,
+            309,
+            254,
+            73686,
+            249,
+            1394,
+            5601,
+            247,
+            73676,
+            57796,
+            73685,
+            73684
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73248,
+          "name": "3. Independent Team",
+          "parent_id": null,
+          "child_ids": [
+            73249,
+            73700,
+            91679,
+            151522,
+            47140,
+            255,
+            6673,
+            73689,
+            73690,
+            73688,
+            73687
+          ],
+          "jobs": []
+        },
+        {
+          "id": 76314,
+          "name": "4. Prospecting (DONOTUSE)",
+          "parent_id": null,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73677,
+          "name": "Accounting",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73686,
+          "name": "Administrative",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 85346,
+          "name": "Analytics",
+          "parent_id": 60666,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73689,
+          "name": "Apprenticeship",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 6427,
+          "name": "Art and Creative",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 247,
+          "name": "Business Development",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73685,
+          "name": "Business Operations/Analysis",
+          "parent_id": 73697,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73682,
+          "name": "Communications",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 294484,
+          "name": "Community",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 249,
+          "name": "Community Support",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73680,
+          "name": "Compensation",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73683,
+          "name": "Compliance",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 85549,
+          "name": "Data Science",
+          "parent_id": 60966,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 250,
+          "name": "Design",
+          "parent_id": 73701,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73701,
+          "name": "Design & Research",
+          "parent_id": 60966,
+          "child_ids": [
+            250,
+            10854
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73249,
+          "name": "[DNU] Airbnb Capability Center",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73700,
+          "name": "Early Career Programs",
+          "parent_id": 73248,
+          "child_ids": [
+            73689,
+            73690,
+            73688,
+            73687
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73695,
+          "name": "Employee Experience",
+          "parent_id": 60666,
+          "child_ids": [
+            73680,
+            73681,
+            378,
+            251
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73703,
+          "name": "Engineering & Technology",
+          "parent_id": 60966,
+          "child_ids": [
+            252,
+            73674,
+            284956,
+            77,
+            73675
+          ],
+          "jobs": []
+        },
+        {
+          "id": 91679,
+          "name": "Executive, All Functions",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73681,
+          "name": "Facilities",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73690,
+          "name": "Fellows",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73694,
+          "name": "Finance & Accounting",
+          "parent_id": 60666,
+          "child_ids": [
+            73677,
+            76,
+            73679,
+            73678
+          ],
+          "jobs": []
+        },
+        {
+          "id": 76,
+          "name": "Financial Planning and Analysis",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 252,
+          "name": "Information Technology",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73688,
+          "name": "Intern",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 151522,
+          "name": "[Internal] Global Mobility Only",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 253,
+          "name": "Legal",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73696,
+          "name": "Legal & Communications",
+          "parent_id": 60666,
+          "child_ids": [
+            73682,
+            73683,
+            253,
+            5600
+          ],
+          "jobs": []
+        },
+        {
+          "id": 309,
+          "name": "Localization",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 47140,
+          "name": "Luxury Retreats",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 254,
+          "name": "Marketing",
+          "parent_id": 73692,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73692,
+          "name": "Marketing & Creative",
+          "parent_id": 60666,
+          "child_ids": [
+            6427,
+            294484,
+            309,
+            254
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73687,
+          "name": "New Grad",
+          "parent_id": 73700,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73674,
+          "name": "Non-Software Engineering",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 1394,
+          "name": "Operations",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73698,
+          "name": "Operations & Support",
+          "parent_id": 60666,
+          "child_ids": [
+            73686,
+            249,
+            1394,
+            5601
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73676,
+          "name": "Partnerships",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 378,
+          "name": "People",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 255,
+          "name": "Photography",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 256,
+          "name": "Product Management",
+          "parent_id": 60966,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73684,
+          "name": "Program Management",
+          "parent_id": 73697,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 5600,
+          "name": "Public Policy",
+          "parent_id": 73696,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73679,
+          "name": "Real Estate",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 251,
+          "name": "Recruiting",
+          "parent_id": 73695,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 10854,
+          "name": "Research",
+          "parent_id": 73701,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 57796,
+          "name": "Sales",
+          "parent_id": 73691,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73691,
+          "name": "Sales & Partnerships",
+          "parent_id": 60666,
+          "child_ids": [
+            247,
+            73676,
+            57796
+          ],
+          "jobs": []
+        },
+        {
+          "id": 284956,
+          "name": "Security",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 77,
+          "name": "Software Engineering",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73697,
+          "name": "Strategy & Planning",
+          "parent_id": 60666,
+          "child_ids": [
+            73685,
+            73684
+          ],
+          "jobs": []
+        },
+        {
+          "id": 73675,
+          "name": "Technical Program Management",
+          "parent_id": 73703,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 6673,
+          "name": "Temp Internal Only",
+          "parent_id": 73248,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 73678,
+          "name": "Treasury",
+          "parent_id": 73694,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 5601,
+          "name": "Trust and Safety",
+          "parent_id": 73698,
+          "child_ids": [],
+          "jobs": []
+        },
+        {
+          "id": 0,
+          "name": "No Department",
+          "parent_id": null,
+          "child_ids": [],
+          "jobs": []
+        }
+      ]
+    }
+  ]
+}

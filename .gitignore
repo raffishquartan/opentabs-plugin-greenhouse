@@ -1,0 +1,21 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Coverage
+coverage/
+
+# Claude Code session artefacts
+.claude/
+cc-out*/
+cc-working*/
+cc-sessions/
