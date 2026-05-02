@@ -43,3 +43,23 @@ describe('htmlToMarkdown', () => {
     expect(htmlToMarkdown('&lt;p&gt;Hello &amp; world&lt;/p&gt;')).toBe('Hello & world');
   });
 });
+
+import { afterEach, beforeEach, vi } from 'vitest';
+
+describe('htmlToMarkdown without DOM (fallback decoder path)', () => {
+  let originalDocument: Document | undefined;
+  beforeEach(() => {
+    originalDocument = (globalThis as { document?: Document }).document;
+    vi.stubGlobal('document', undefined);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    if (originalDocument !== undefined) {
+      (globalThis as { document?: Document }).document = originalDocument;
+    }
+  });
+
+  it('decodes core HTML entities via the manual fallback when document is undefined', () => {
+    expect(htmlToMarkdown('&lt;p&gt;Hello &amp; world&lt;/p&gt;')).toBe('Hello & world');
+  });
+});
