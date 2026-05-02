@@ -43,6 +43,7 @@ describe('GreenhousePlugin', () => {
     const expected = [
       'list_jobs',
       'get_job',
+      'search_jobs',
       'recent_jobs',
       'summary',
       'list_departments',
@@ -54,7 +55,7 @@ describe('GreenhousePlugin', () => {
     for (const e of expected) {
       expect(names).toContain(e);
     }
-    expect(plugin.tools).toHaveLength(9);
+    expect(plugin.tools).toHaveLength(10);
   });
 
   it('no tool name uses a banned write-verb prefix', () => {
