@@ -9,6 +9,7 @@ import { listJobs } from './tools/list-jobs.js';
 import { listLocations } from './tools/list-locations.js';
 import { listOffices } from './tools/list-offices.js';
 import { listTitles } from './tools/list-titles.js';
+import { recentJobs } from './tools/recent-jobs.js';
 import { validateApi } from './tools/validate-api.js';
 
 class GreenhousePlugin extends OpenTabsPlugin {
@@ -26,6 +27,7 @@ class GreenhousePlugin extends OpenTabsPlugin {
   override readonly tools: ToolDefinition[] = [
     listJobs,
     getJob,
+    recentJobs,
     listDepartments,
     listOffices,
     listLocations,
