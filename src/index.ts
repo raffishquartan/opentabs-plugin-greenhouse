@@ -9,6 +9,7 @@ import { listJobs } from './tools/list-jobs.js';
 import { listLocations } from './tools/list-locations.js';
 import { listOffices } from './tools/list-offices.js';
 import { listTitles } from './tools/list-titles.js';
+import { compareBoards } from './tools/compare-boards.js';
 import { recentJobs } from './tools/recent-jobs.js';
 import { searchJobs } from './tools/search-jobs.js';
 import { summary } from './tools/summary.js';
@@ -32,6 +33,7 @@ class GreenhousePlugin extends OpenTabsPlugin {
     searchJobs,
     recentJobs,
     summary,
+    compareBoards,
     listDepartments,
     listOffices,
     listLocations,

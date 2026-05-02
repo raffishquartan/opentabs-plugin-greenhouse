@@ -46,6 +46,7 @@ describe('GreenhousePlugin', () => {
       'search_jobs',
       'recent_jobs',
       'summary',
+      'compare_boards',
       'list_departments',
       'list_offices',
       'list_locations',
@@ -55,7 +56,7 @@ describe('GreenhousePlugin', () => {
     for (const e of expected) {
       expect(names).toContain(e);
     }
-    expect(plugin.tools).toHaveLength(10);
+    expect(plugin.tools).toHaveLength(11);
   });
 
   it('no tool name uses a banned write-verb prefix', () => {
