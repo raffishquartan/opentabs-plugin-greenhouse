@@ -46,11 +46,21 @@ describe('GreenhousePlugin', () => {
     }
   });
 
-  it('exposes the read-only tool surface', () => {
+  it('exposes the seven read-only tools', () => {
     const names = plugin.tools.map((t: { name: string }) => t.name);
-    for (const expected of ['list_jobs', 'get_job', 'list_departments', 'list_offices', 'list_locations', 'list_titles']) {
-      expect(names).toContain(expected);
+    const expected = [
+      'list_jobs',
+      'get_job',
+      'list_departments',
+      'list_offices',
+      'list_locations',
+      'list_titles',
+      'validate_api',
+    ];
+    for (const e of expected) {
+      expect(names).toContain(e);
     }
+    expect(plugin.tools).toHaveLength(7);
   });
 
   it('no tool name uses a banned write-verb prefix', () => {
