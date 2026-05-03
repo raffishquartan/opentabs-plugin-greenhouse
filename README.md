@@ -3,105 +3,77 @@
 [![check](https://github.com/raffishquartan/opentabs-plugin-greenhouse/actions/workflows/check.yml/badge.svg)](https://github.com/raffishquartan/opentabs-plugin-greenhouse/actions/workflows/check.yml)
 [![live-api-canary](https://github.com/raffishquartan/opentabs-plugin-greenhouse/actions/workflows/live-api-canary.yml/badge.svg)](https://github.com/raffishquartan/opentabs-plugin-greenhouse/actions/workflows/live-api-canary.yml)
 
-An [OpenTabs](https://opentabs.dev) plugin that exposes read-only tools for any
-company's [Greenhouse](https://www.greenhouse.io) public job board. Lets an AI agent or
-other client list, filter and inspect openings without authentication.
+An [OpenTabs](https://opentabs.dev) plugin that exposes any company's public [Greenhouse](https://www.greenhouse.io) job board as a set of read-only MCP tools. Lets an AI agent or other MCP client list, filter and inspect openings without authentication.
 
-## Use cases
+## What you can do with it
 
-- Scan a company's openings for roles your network might fit, to plan referrals.
-- Filter by department, location or title across an entire company's board.
-- Pull a single job's full markdown description for review or summarisation.
+- "Show me all open ML engineering roles at PhysicsX in London."
+- "How many of Anthropic's openings are in Dublin? Group by department."
+- "Pull the full description of job 4644845101 as markdown so I can summarise it."
+- "Sweep this same role title across our company plus a peer set."
+- "What's been posted at PhysicsX in the last week?"
 
-## Supported job-board hosts
+Anything you'd manually click through the company's Greenhouse careers page for, an agent can do via the MCP tools instead.
 
-The plugin activates on tabs whose URL matches:
+## How it works (and why same-origin)
 
-- `boards.greenhouse.io/<token>`
-- `job-boards.greenhouse.io/<token>`
-- `job-boards.eu.greenhouse.io/<token>`
+OpenTabs plugins run inside the page context of the active tab. The Greenhouse job-board pages serve a strict Content-Security-Policy that blocks `fetch()` to anything outside the page's own origin, including `boards-api.greenhouse.io`. So this plugin scrapes the data straight out of the Remix state object embedded in each job-board page (`window.__remixContext`) - the same object the page itself uses to render the job list and per-job details. No authentication, no third-party hosts, one same-origin GET per page fetched.
 
-## Architecture: same-origin scrape, not REST API
+Practical implication: a single tool call always runs from one tab, and that tab's origin is the only Greenhouse host the call can reach. For most use cases that's invisible; the only place you'll feel it is `compare_boards` across two regions (see [Limitations](#limitations)).
 
-> **As of v0.1.0 the plugin no longer calls `boards-api.greenhouse.io`.**
->
-> Greenhouse-hosted job-board pages serve a Content-Security-Policy that blocks
-> cross-origin `fetch()` to `boards-api.greenhouse.io` from inside the page context.
-> The plugin's adapter runs in the page context, so the API host was unreachable.
->
-> v0.1.0 switches to the OpenTabs `hackernews`-style pattern: scrape the same-origin
-> Remix HTML pages and parse `window.__remixContext` for job, department and office
-> data, then fetch per-job pages for full descriptions. CSP is satisfied by
-> construction because everything is same-origin.
->
-> Side-effects of the switch (covered in CHANGELOG and below):
->
-> - Tools that crossed hosts (e.g. `compare_boards` between an EU and a US board)
->   now fail per-board with a CSP error - same-host queries work normally.
-> - The `workplace_type` field and filter are removed - the data isn't in the
->   scraped Remix state.
-> - The `office` filter on `list_jobs` is removed - per-job entries on the index
->   page only carry a single department, not offices.
-> - Department hierarchy (parent/child) is replaced by a flat list - again, the
->   scraped data is flat.
-> - Office hierarchy is now expressed as nested `children: []` rather than the
->   API's `parent_id` / `child_ids` shape.
+## Supported pages
+
+The plugin activates on tabs whose URL matches one of:
+
+- `https://boards.greenhouse.io/<token>`
+- `https://job-boards.greenhouse.io/<token>` (US-region)
+- `https://job-boards.eu.greenhouse.io/<token>` (EU-region)
+
+`<token>` is whatever the company is named on Greenhouse - e.g. `airbnb`, `physicsx`, `anthropic`. You can also pass a full URL to any tool's optional `board` argument; the plugin extracts the token (and the host).
 
 ## Tools
 
-| Tool | Purpose |
+| Tool | What it does |
 |------|---------|
-| `list_jobs` | List jobs on a board with optional filters (department, location-substring, title-substring, updated-after). Auto-paginates. |
-| `get_job` | Full details for a single job including the description as markdown |
-| `search_jobs` | Substring search across titles, locations, departments and offices. `include_content=true` also searches per-job description bodies (slow). |
-| `recent_jobs` | Most recently published jobs, sorted by `published_at` descending |
-| `summary` | Total job count plus breakdowns by department and location |
-| `compare_boards` | Sweep the same filter across multiple boards in parallel; per-board success/failure reported individually |
-| `list_departments` | Department taxonomy (flat) |
-| `list_offices` | Office taxonomy with nested `children` hierarchy |
-| `list_locations` | Distinct posted-location strings across all jobs, with counts |
-| `list_titles` | Distinct job titles, with counts |
-| `validate_api` | Probe the scrape path: parse the board page and one per-job page; fail fast on parser drift |
+| `list_jobs` | Auto-paginated list of jobs on a board. Filters: department, location-substring, title-substring, updated-after. Returns lightweight summaries; call `get_job` for the full body. |
+| `get_job` | Full details for a single job including the description as markdown. |
+| `search_jobs` | Substring search across titles, locations, departments and offices. Pass `include_content: true` to also search per-job description bodies (slow). |
+| `recent_jobs` | Most recently published jobs, sorted by `published_at` descending. Optional `since` and `limit`. |
+| `summary` | Total job count plus breakdowns by department and location. |
+| `compare_boards` | Sweep the same filter across multiple boards in parallel; per-board success/failure reported individually. |
+| `list_departments` | Department taxonomy (flat). |
+| `list_offices` | Office taxonomy with nested `children` hierarchy. |
+| `list_locations` | Distinct posted-location strings across all jobs, with counts. |
+| `list_titles` | Distinct job titles, with counts. |
+| `validate_api` | Probe the scrape path: parse the board page and one per-job page; fail fast on parser drift if Greenhouse changes its front-end. |
 
-All tools accept an optional `board` argument (a board token like `airbnb`, or a full
-job-board URL). If omitted, the board is inferred from the active tab's URL. The host
-to scrape is also inferred from the active tab - querying a board on a different
-greenhouse host will fail with a CSP error at runtime.
+All tools accept an optional `board` argument (token or full URL). If omitted, the board and host are inferred from the active tab's URL - so you can leave a single Greenhouse tab open and query other companies' boards by passing their token explicitly.
 
-### Filter semantics on `list_jobs`
+## Filter semantics on `list_jobs`
 
-- `department`: name (case-insensitive exact) or numeric id. Single-department-per-job
-  match (Remix exposes only one). Unknown values produce a clear error listing the
-  available departments.
-- `location_contains` and `title_contains`: case-insensitive substring match.
-- `updated_after`: ISO-8601 timestamp; matches jobs with `updated_at >= input`.
-- All filters AND together.
+- `department`: name (case-insensitive exact) or numeric id. Single-department-per-job match (Remix exposes one). Unknown values produce a clear validation error listing the available departments.
+- `location_contains` / `title_contains`: case-insensitive substring match.
+- `updated_after`: ISO-8601 timestamp; matches `updated_at >= input`.
+- All filters combine with AND.
 
-### `get_job` markdown
+## `get_job` markdown
 
-The `content` HTML field from the per-job Remix state is converted to markdown via
-`turndown`. The plugin returns markdown only - if you need the raw HTML, fetch the page
-yourself.
+The HTML description body in the per-job Remix state is converted to markdown via [turndown](https://github.com/mixmark-io/turndown) so the output is small, readable and safe to feed straight into a model prompt or summarisation flow.
 
 ## Contract validation
 
-The plugin validates every parsed Remix payload against a Zod schema. Known fields are
-required with expected types; unknown fields are tolerated. If a known field is missing
-or wrong-typed, the parser throws `parseBoardPage: contract drift at <path>: ...` (or the
-equivalent for `parseJobPage`), so a Greenhouse front-end change fails fast and visibly.
-The `validate_api` tool probes both the board and per-job paths explicitly for proactive
-monitoring.
+Every parsed Remix payload is validated against a Zod schema before tools see it. If Greenhouse changes a known field's type, the parser throws `parseBoardPage: contract drift at <path>: <message>` (or the equivalent for `parseJobPage`) so the failure is loud and obvious instead of producing silently-wrong output. The `validate_api` tool exists for proactive monitoring of both the board and per-job paths.
 
-## Example
+## Examples
 
 ```jsonc
-// list_jobs with no board arg, when active tab is a Greenhouse board
+// list_jobs with no board arg, when the active tab is a Greenhouse board
 {}
 
-// list_jobs filtered to engineering openings in London, on a specific board
+// list_jobs filtered to engineering roles in London on a specific board
 {
   "board": "physicsx",
-  "department": "Delivery",
+  "department": "Product",
   "location_contains": "London"
 }
 
@@ -110,7 +82,35 @@ monitoring.
   "board": "physicsx",
   "id": 4644845101
 }
+
+// search the entire board including description bodies (slow)
+{
+  "board": "anthropic",
+  "query": "rust",
+  "include_content": true
+}
 ```
+
+## Installation
+
+You need a working OpenTabs install (browser extension + MCP server) - see <https://opentabs.dev>.
+
+```bash
+git clone https://github.com/raffishquartan/opentabs-plugin-greenhouse.git
+cd opentabs-plugin-greenhouse
+npm install
+npm run build
+```
+
+The build emits the adapter bundle into `dist/`. Point your OpenTabs install at this directory in the way it expects (consult the OpenTabs docs for the current registration mechanism). Approve the plugin from the OpenTabs Chrome side panel when it first surfaces.
+
+## Limitations
+
+- **Cross-host `compare_boards`**: tool calls run in one tab and can only fetch from that tab's origin. To compare boards across `job-boards.greenhouse.io` (US) and `job-boards.eu.greenhouse.io` (EU), open a tab on each host and either pass the right `tabId` per call or split the comparison into two calls. A single mixed-host call returns per-board errors for the boards on the other region.
+- **`search_jobs include_content=true`** issues N parallel HTTP requests with no concurrency limit - fine for small boards (tens of jobs), slow for large ones (hundreds).
+- **`workplace_type`** is not available; Greenhouse doesn't include it in the page's Remix state.
+- **Multi-department jobs** show only one department (the one Greenhouse picked as primary).
+- **Some companies have migrated** their job boards from Greenhouse-hosted URLs to their own careers domain (e.g. `careers.airbnb.com`). Those are no longer reachable by this plugin.
 
 ## Development
 
@@ -121,6 +121,8 @@ LIVE_API=1 npm test # also runs live scrape smoke tests against physicsx + anthr
 npm run build       # tsc + opentabs-plugin build -> dist/
 npm run check       # build + typecheck + lint + format check
 ```
+
+The repo follows strict TDD: every behaviour change starts with a failing test. Live tests are gated on `LIVE_API=1` so the offline run stays deterministic.
 
 ## License
 
