@@ -4,11 +4,12 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { parseBoardPage } from './scrape.js';
+import { parseBoardPage, parseJobPage } from './scrape.js';
 
 const FIXTURE_DIR = join(__dirname, 'fixtures/scrape');
 const physicsxBoardHtml = readFileSync(join(FIXTURE_DIR, 'physicsx-board.html'), 'utf8');
 const anthropicBoardHtml = readFileSync(join(FIXTURE_DIR, 'anthropic-board.html'), 'utf8');
+const physicsxJobHtml = readFileSync(join(FIXTURE_DIR, 'physicsx-job-4644845101.html'), 'utf8');
 
 describe('parseBoardPage', () => {
   it('extracts the job list from the physicsx Remix board page', () => {
@@ -65,6 +66,38 @@ describe('parseBoardPage', () => {
   it('throws a clear error when __remixContext is not present', () => {
     expect(() => parseBoardPage('<html><body>no remix here</body></html>')).toThrow(/__remixContext not found/);
   });
+});
+
+describe('parseJobPage', () => {
+  it('extracts id, title and company_name from the per-job Remix state', () => {
+    const job = parseJobPage(physicsxJobHtml);
+    expect(job.id).toBe(4644845101);
+    expect(job.title).toBe('Senior CFD Engineer - Turbomachinery');
+    expect(job.company_name).toBe('PhysicsX');
+  });
+
+  it('extracts location, absolute_url, published_at and language', () => {
+    const job = parseJobPage(physicsxJobHtml);
+    expect(job.location).toBe('New York, United States');
+    expect(job.absolute_url).toBe('https://job-boards.eu.greenhouse.io/physicsx/jobs/4644845101');
+    expect(job.published_at).toBe('2025-08-18T14:35:06-04:00');
+    expect(job.language).toBe('en');
+  });
+
+  it('returns the raw HTML content body (no surrounding chrome)', () => {
+    const { content } = parseJobPage(physicsxJobHtml);
+    expect(content).toMatch(/^<h2>/);
+    expect(content.length).toBeGreaterThan(500);
+    expect(content).not.toContain('<html');
+    expect(content).not.toContain('<body');
+  });
+
+  it('throws a clear error when the per-job route is not present', () => {
+    expect(() => parseJobPage(physicsxBoardHtml)).toThrow(/jobPost not present/);
+  });
+});
+
+describe('parseBoardPage (continued)', () => {
 
   it('extracts the office taxonomy from physicsx with hierarchy', () => {
     const { offices } = parseBoardPage(physicsxBoardHtml);

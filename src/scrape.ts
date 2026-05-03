@@ -119,3 +119,64 @@ export function parseBoardPage(html: string): ScrapedBoard {
     offices,
   };
 }
+
+export interface ScrapedJobFull {
+  id: number;
+  title: string;
+  company_name: string;
+  content: string;
+  location: string;
+  absolute_url: string;
+  published_at: string;
+  language: string;
+}
+
+interface RawJobPost {
+  title?: string;
+  content?: string;
+  company_name?: string;
+  job_post_location?: string;
+  public_url?: string;
+  published_at?: string;
+  language?: string;
+}
+
+interface JobRouteData {
+  jobPost?: RawJobPost;
+  jobPostId?: number | string;
+}
+
+export function parseJobPage(html: string): ScrapedJobFull {
+  const ctx = extractRemixContext(html);
+  const loaderData = ctx.state?.loaderData ?? {};
+  const route = loaderData['routes/$url_token_.jobs_.$job_post_id'] as JobRouteData | undefined;
+  if (!route?.jobPost) {
+    throw new Error('parseJobPage: routes/$url_token_.jobs_.$job_post_id.jobPost not present');
+  }
+  const idRaw = route.jobPostId;
+  const id = typeof idRaw === 'string' ? Number(idRaw) : idRaw;
+  const post = route.jobPost;
+  if (
+    typeof id !== 'number' ||
+    !Number.isFinite(id) ||
+    typeof post.title !== 'string' ||
+    typeof post.company_name !== 'string' ||
+    typeof post.content !== 'string' ||
+    typeof post.job_post_location !== 'string' ||
+    typeof post.public_url !== 'string' ||
+    typeof post.published_at !== 'string' ||
+    typeof post.language !== 'string'
+  ) {
+    throw new Error('parseJobPage: required jobPost fields missing or wrong type');
+  }
+  return {
+    id,
+    title: post.title,
+    company_name: post.company_name,
+    content: post.content,
+    location: post.job_post_location,
+    absolute_url: post.public_url,
+    published_at: post.published_at,
+    language: post.language,
+  };
+}
