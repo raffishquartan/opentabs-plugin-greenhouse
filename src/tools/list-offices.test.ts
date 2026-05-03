@@ -1,36 +1,35 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 raffishquartan
 
-import { describe, it, expect, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@opentabs-dev/plugin-sdk', () => ({
   defineTool: (config: unknown) => config,
-  ToolError: {
-    auth: (msg: string) => new Error(msg),
-    notFound: (msg: string) => new Error(msg),
-    validation: (msg: string) => new Error(msg),
-    internal: (msg: string) => new Error(msg),
-  },
+  fetchText: async () => '',
 }));
 
-import officesFixture from '../fixtures/offices.json' with { type: 'json' };
 import { runListOffices } from './list-offices.js';
 
-describe('runListOffices', () => {
-  it('returns office summaries with hierarchy info', async () => {
-    const fetchImpl = vi.fn(async () => new Response(JSON.stringify(officesFixture), { status: 200 }));
-    const result = await runListOffices({ board: 'airbnb' }, { fetchImpl });
-    expect(result.board).toBe('airbnb');
-    expect(result.offices).toHaveLength(5);
-    const first = result.offices[0];
-    expect(first?.name).toBe('AMER');
-    expect(first?.parent_id).toBeNull();
-    expect(Array.isArray(first?.child_ids)).toBe(true);
-  });
+const physicsxBoardHtml = readFileSync(join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'), 'utf8');
 
-  it('does not include the embedded departments array', async () => {
-    const fetchImpl = vi.fn(async () => new Response(JSON.stringify(officesFixture), { status: 200 }));
-    const result = await runListOffices({ board: 'airbnb' }, { fetchImpl });
-    expect(result.offices[0]).not.toHaveProperty('departments');
+describe('runListOffices', () => {
+  it('returns the office taxonomy preserving the nested children hierarchy', async () => {
+    const result = await runListOffices({ board: 'physicsx' }, { fetchText: async () => physicsxBoardHtml });
+    expect(result.board).toBe('physicsx');
+    expect(result.offices).toEqual([
+      { id: 4036123101, name: 'Singapore', children: [] },
+      {
+        id: 4024607101,
+        name: 'UK',
+        children: [{ id: 4024608101, name: 'London', children: [] }],
+      },
+      {
+        id: 4024609101,
+        name: 'USA',
+        children: [{ id: 4024610101, name: 'New York', children: [] }],
+      },
+    ]);
   });
 });
