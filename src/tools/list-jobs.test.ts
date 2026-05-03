@@ -1,74 +1,71 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 raffishquartan
 
-import { describe, it, expect, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@opentabs-dev/plugin-sdk', () => ({
   defineTool: (config: unknown) => config,
+  fetchText: async () => '',
   ToolError: {
-    auth: (msg: string) => new Error(msg),
-    notFound: (msg: string) => new Error(msg),
     validation: (msg: string) => new Error(msg),
-    internal: (msg: string) => new Error(msg),
   },
 }));
 
-import jobsFixture from '../fixtures/jobs.json' with { type: 'json' };
-import departmentsFixture from '../fixtures/departments.json' with { type: 'json' };
-import officesFixture from '../fixtures/offices.json' with { type: 'json' };
 import { runListJobs } from './list-jobs.js';
 
-function fetchFromFixtures() {
-  return vi.fn(async (url: string) => {
-    if (url.endsWith('/departments')) {
-      return new Response(JSON.stringify(departmentsFixture), { status: 200 });
-    }
-    if (url.endsWith('/offices')) {
-      return new Response(JSON.stringify(officesFixture), { status: 200 });
-    }
-    if (url.includes('/jobs')) {
-      return new Response(JSON.stringify(jobsFixture), { status: 200 });
-    }
-    return new Response('not found', { status: 404 });
-  });
-}
+const physicsxBoardHtml = readFileSync(
+  join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'),
+  'utf8',
+);
 
 describe('runListJobs', () => {
-  it('returns all jobs with summaries when no filters given', async () => {
-    const result = await runListJobs({ board: 'airbnb' }, { fetchImpl: fetchFromFixtures() });
-    expect(result.board).toBe('airbnb');
-    expect(result.total).toBe(5);
-    expect(result.jobs).toHaveLength(5);
-    expect(result.jobs[0]?.id).toBeTypeOf('number');
-    expect(result.jobs[0]?.title).toBeTypeOf('string');
-    expect(result.jobs[0]?.location).toBeTypeOf('string');
-  });
-
-  it('includes offices and departments as name arrays', async () => {
-    const result = await runListJobs({ board: 'airbnb' }, { fetchImpl: fetchFromFixtures() });
+  it('returns all jobs from the physicsx fixture (single page) with new shape', async () => {
+    const result = await runListJobs(
+      { board: 'physicsx' },
+      { fetchText: async () => physicsxBoardHtml },
+    );
+    expect(result.board).toBe('physicsx');
+    expect(result.total).toBe(39);
+    expect(result.jobs).toHaveLength(39);
     const first = result.jobs[0];
-    expect(Array.isArray(first?.offices)).toBe(true);
-    expect(Array.isArray(first?.departments)).toBe(true);
+    expect(first?.id).toEqual(expect.any(Number));
+    expect(first?.title.length).toBeGreaterThan(0);
+    expect(first?.absolute_url.startsWith('http')).toBe(true);
+    expect(first?.updated_at.length).toBeGreaterThan(0);
+    expect(first?.published_at.length).toBeGreaterThan(0);
   });
 
-  it('infers board from currentUrl when board omitted', async () => {
+  it('filters by title_contains case-insensitively', async () => {
     const result = await runListJobs(
-      {},
-      {
-        fetchImpl: fetchFromFixtures(),
-        currentUrl: 'https://job-boards.eu.greenhouse.io/airbnb/jobs/12345',
-      },
+      { board: 'physicsx', title_contains: 'engineer' },
+      { fetchText: async () => physicsxBoardHtml },
     );
-    expect(result.board).toBe('airbnb');
-  });
-
-  it('filters by title_contains', async () => {
-    const result = await runListJobs(
-      { board: 'airbnb', title_contains: 'manager' },
-      { fetchImpl: fetchFromFixtures() },
-    );
-    for (const job of result.jobs) {
-      expect(job.title.toLowerCase()).toContain('manager');
+    expect(result.jobs.length).toBeGreaterThan(0);
+    for (const j of result.jobs) {
+      expect(j.title.toLowerCase()).toContain('engineer');
     }
+    expect(result.total).toBe(result.jobs.length);
+  });
+
+  it('filters by department name', async () => {
+    const result = await runListJobs(
+      { board: 'physicsx', department: 'Delivery' },
+      { fetchText: async () => physicsxBoardHtml },
+    );
+    expect(result.jobs.length).toBeGreaterThan(0);
+    for (const j of result.jobs) {
+      expect(j.department?.name).toBe('Delivery');
+    }
+  });
+
+  it('throws a clear validation error for an unknown department', async () => {
+    await expect(
+      runListJobs(
+        { board: 'physicsx', department: 'DefinitelyNotADept' },
+        { fetchText: async () => physicsxBoardHtml },
+      ),
+    ).rejects.toThrow(/Unknown department.*Delivery, Operations, Product, Research/);
   });
 });

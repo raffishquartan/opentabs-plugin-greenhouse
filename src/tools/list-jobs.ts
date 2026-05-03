@@ -3,11 +3,9 @@
 
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
-import { fetchDepartments, fetchJobs, fetchOffices } from '../api.js';
-import type { FetchLike, Job } from '../api.js';
-import { resolveBoardToken } from '../board.js';
+import { resolveBoardHost, resolveBoardToken } from '../board.js';
 import { applyJobFilters } from '../filters.js';
-import { extractWorkplaceType } from '../metadata.js';
+import { type FetchTextLike, type ScrapedJob, fetchBoard } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z
@@ -20,41 +18,29 @@ const InputSchema = z.object({
     .union([z.string(), z.number()])
     .optional()
     .describe(
-      'Filter by department name (case-insensitive exact) or numeric id. Matches the entity and any descendant departments.',
+      'Filter by department name (case-insensitive exact) or numeric id. Note: scrape exposes only one department per job, so multi-department jobs will only match one of theirs.',
     ),
-  office: z
-    .union([z.string(), z.number()])
-    .optional()
-    .describe('Filter by office name or numeric id. Matches the entity and any descendant offices.'),
   location_contains: z.string().optional().describe("Case-insensitive substring filter on the job's posted location."),
   title_contains: z.string().optional().describe('Case-insensitive substring filter on the job title.'),
   updated_after: z
     .string()
     .optional()
     .describe('ISO-8601 timestamp; only jobs with updated_at >= this value are returned.'),
-  workplace_type: z
-    .string()
-    .optional()
-    .describe('Filter by workplace type from job metadata: "Remote", "Hybrid", "Onsite", etc. Case-insensitive exact.'),
 });
 
 const JobSummarySchema = z.object({
   id: z.number(),
   title: z.string(),
   location: z.string(),
-  offices: z.array(z.string()),
-  departments: z.array(z.string()),
+  department: z.object({ id: z.number(), name: z.string() }).nullable(),
   absolute_url: z.string(),
   updated_at: z.string(),
-  workplace_type: z
-    .string()
-    .nullable()
-    .describe('Workplace type extracted from job metadata, or null if not provided.'),
+  published_at: z.string(),
 });
 
 const OutputSchema = z.object({
   board: z.string().describe('The resolved board token.'),
-  total: z.number().describe('Total matching jobs after filtering.'),
+  total: z.number().describe('Total matching jobs after filtering, across all pages fetched.'),
   jobs: z.array(JobSummarySchema),
 });
 
@@ -62,42 +48,57 @@ export type ListJobsInput = z.infer<typeof InputSchema>;
 export type ListJobsOutput = z.infer<typeof OutputSchema>;
 
 export interface ListJobsDeps {
-  fetchImpl?: FetchLike;
+  fetchText?: FetchTextLike;
   currentUrl?: string;
 }
 
-function summarise(jobs: Job[]): ListJobsOutput['jobs'] {
+function summarise(jobs: ScrapedJob[]): ListJobsOutput['jobs'] {
   return jobs.map(j => ({
     id: j.id,
     title: j.title,
-    location: j.location.name,
-    offices: j.offices.map(o => o.name),
-    departments: j.departments.map(d => d.name),
+    location: j.location,
+    department: j.department,
     absolute_url: j.absolute_url,
     updated_at: j.updated_at,
-    workplace_type: extractWorkplaceType(j),
+    published_at: j.published_at,
   }));
+}
+
+async function fetchAllJobs(
+  token: string,
+  deps: ListJobsDeps,
+  host: string,
+): Promise<{ jobs: ScrapedJob[]; departments: ListJobsDepsExt['departments'] }> {
+  const first = await fetchBoard(token, { fetchText: deps.fetchText, host, page: 1 });
+  const all: ScrapedJob[] = [...first.jobs];
+  if (first.totalPages > 1) {
+    const more = await Promise.all(
+      Array.from({ length: first.totalPages - 1 }, (_unused, i) =>
+        fetchBoard(token, { fetchText: deps.fetchText, host, page: i + 2 }),
+      ),
+    );
+    for (const p of more) all.push(...p.jobs);
+  }
+  return { jobs: all, departments: first.departments };
+}
+
+interface ListJobsDepsExt {
+  departments: import('../scrape.js').ScrapedDepartment[];
 }
 
 export async function runListJobs(input: ListJobsInput, deps: ListJobsDeps = {}): Promise<ListJobsOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
-  const [jobsResponse, departmentsResponse, officesResponse] = await Promise.all([
-    fetchJobs(token, deps.fetchImpl),
-    fetchDepartments(token, deps.fetchImpl),
-    fetchOffices(token, deps.fetchImpl),
-  ]);
+  const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
+  const { jobs, departments } = await fetchAllJobs(token, deps, host);
   const filtered = applyJobFilters(
-    jobsResponse.jobs,
+    jobs,
     {
       department: input.department,
-      office: input.office,
       location_contains: input.location_contains,
       title_contains: input.title_contains,
       updated_after: input.updated_after,
-      workplace_type: input.workplace_type,
     },
-    departmentsResponse.departments,
-    officesResponse.offices,
+    departments,
   );
   return {
     board: token,
@@ -110,7 +111,7 @@ export const listJobs = defineTool({
   name: 'list_jobs',
   displayName: 'List Jobs',
   description:
-    'List jobs on a Greenhouse public job board with optional filters by department (name or id), office (name or id), location substring, title substring, and updated-after timestamp. Returns lightweight summaries (no description body). Department and office filters match the named entity AND any of its descendants.',
+    'List all jobs on a Greenhouse public job board with optional filters by department, location substring, title substring, and updated-after timestamp. Auto-paginates across pages of 50 jobs. Returns lightweight summaries (no description body); call get_job for the full description.',
   icon: 'briefcase',
   group: 'Jobs',
   input: InputSchema,
