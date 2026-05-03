@@ -4,7 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { parseBoardPage, parseJobPage } from './scrape.js';
+import { fetchBoard, fetchJob, parseBoardPage, parseJobPage } from './scrape.js';
 
 const FIXTURE_DIR = join(__dirname, 'fixtures/scrape');
 const physicsxBoardHtml = readFileSync(join(FIXTURE_DIR, 'physicsx-board.html'), 'utf8');
@@ -94,6 +94,57 @@ describe('parseJobPage', () => {
 
   it('throws a clear error when the per-job route is not present', () => {
     expect(() => parseJobPage(physicsxBoardHtml)).toThrow(/jobPost not present/);
+  });
+});
+
+describe('fetchBoard', () => {
+  it('fetches /<token> on the configured host and parses the result', async () => {
+    const captured: string[] = [];
+    const mockFetch = async (url: string) => {
+      captured.push(url);
+      return physicsxBoardHtml;
+    };
+    const result = await fetchBoard('physicsx', { fetchText: mockFetch, host: 'https://job-boards.eu.greenhouse.io' });
+    expect(captured).toEqual(['https://job-boards.eu.greenhouse.io/physicsx']);
+    expect(result.board).toBe('physicsx');
+    expect(result.jobs).toHaveLength(39);
+  });
+
+  it('appends ?page=N when fetching a non-first page', async () => {
+    const captured: string[] = [];
+    const mockFetch = async (url: string) => {
+      captured.push(url);
+      return anthropicBoardHtml;
+    };
+    await fetchBoard('anthropic', { fetchText: mockFetch, host: 'https://job-boards.greenhouse.io', page: 3 });
+    expect(captured).toEqual(['https://job-boards.greenhouse.io/anthropic?page=3']);
+  });
+
+  it('encodes the board token in the URL', async () => {
+    const captured: string[] = [];
+    const mockFetch = async (url: string) => {
+      captured.push(url);
+      return physicsxBoardHtml;
+    };
+    await fetchBoard('phy_sicsx', { fetchText: mockFetch, host: 'https://job-boards.eu.greenhouse.io' });
+    expect(captured[0]).toContain('/phy_sicsx');
+  });
+});
+
+describe('fetchJob', () => {
+  it('fetches /<token>/jobs/<id> on the configured host and parses the result', async () => {
+    const captured: string[] = [];
+    const mockFetch = async (url: string) => {
+      captured.push(url);
+      return physicsxJobHtml;
+    };
+    const job = await fetchJob('physicsx', 4644845101, {
+      fetchText: mockFetch,
+      host: 'https://job-boards.eu.greenhouse.io',
+    });
+    expect(captured).toEqual(['https://job-boards.eu.greenhouse.io/physicsx/jobs/4644845101']);
+    expect(job.id).toBe(4644845101);
+    expect(job.title).toBe('Senior CFD Engineer - Turbomachinery');
   });
 });
 

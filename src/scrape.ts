@@ -1,6 +1,27 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 raffishquartan
 
+import { fetchText as sdkFetchText } from '@opentabs-dev/plugin-sdk';
+
+export type FetchTextLike = (url: string) => Promise<string>;
+
+export interface FetchBoardOptions {
+  fetchText?: FetchTextLike;
+  host?: string;
+  page?: number;
+}
+
+export interface FetchJobOptions {
+  fetchText?: FetchTextLike;
+  host?: string;
+}
+
+const DEFAULT_HOST = 'https://job-boards.greenhouse.io';
+
+function defaultFetchText(): FetchTextLike {
+  return (url: string) => sdkFetchText(url);
+}
+
 export interface ScrapedJob {
   id: number;
   title: string;
@@ -179,4 +200,22 @@ export function parseJobPage(html: string): ScrapedJobFull {
     published_at: post.published_at,
     language: post.language,
   };
+}
+
+export async function fetchBoard(token: string, options: FetchBoardOptions = {}): Promise<ScrapedBoard> {
+  const ft = options.fetchText ?? defaultFetchText();
+  const host = options.host ?? DEFAULT_HOST;
+  const page = options.page ?? 1;
+  const pageQuery = page > 1 ? `?page=${page}` : '';
+  const url = `${host}/${encodeURIComponent(token)}${pageQuery}`;
+  const html = await ft(url);
+  return parseBoardPage(html);
+}
+
+export async function fetchJob(token: string, id: number, options: FetchJobOptions = {}): Promise<ScrapedJobFull> {
+  const ft = options.fetchText ?? defaultFetchText();
+  const host = options.host ?? DEFAULT_HOST;
+  const url = `${host}/${encodeURIComponent(token)}/jobs/${id}`;
+  const html = await ft(url);
+  return parseJobPage(html);
 }
