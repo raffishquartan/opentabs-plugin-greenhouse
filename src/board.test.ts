@@ -2,7 +2,7 @@
 // Copyright (c) 2026 raffishquartan
 
 import { describe, it, expect } from 'vitest';
-import { resolveBoardToken } from './board.js';
+import { resolveBoardHost, resolveBoardToken } from './board.js';
 
 describe('resolveBoardToken', () => {
   it('accepts a simple lowercase alphanumeric token', () => {
@@ -47,5 +47,29 @@ describe('resolveBoardToken', () => {
 
   it('throws when currentUrl is greenhouse but has no token segment', () => {
     expect(() => resolveBoardToken({ currentUrl: 'https://job-boards.eu.greenhouse.io/' })).toThrow(/no board/i);
+  });
+});
+
+describe('resolveBoardHost', () => {
+  it('uses the host of an explicit board URL when given one', () => {
+    expect(resolveBoardHost({ board: 'https://job-boards.eu.greenhouse.io/physicsx' })).toBe(
+      'https://job-boards.eu.greenhouse.io',
+    );
+  });
+
+  it('falls back to currentUrl host when board is just a token', () => {
+    expect(
+      resolveBoardHost({ board: 'physicsx', currentUrl: 'https://job-boards.eu.greenhouse.io/physicsx' }),
+    ).toBe('https://job-boards.eu.greenhouse.io');
+  });
+
+  it('defaults to job-boards.greenhouse.io when nothing else resolves', () => {
+    expect(resolveBoardHost({ board: 'physicsx' })).toBe('https://job-boards.greenhouse.io');
+  });
+
+  it('ignores non-greenhouse hosts in currentUrl', () => {
+    expect(resolveBoardHost({ board: 'physicsx', currentUrl: 'https://example.com/' })).toBe(
+      'https://job-boards.greenhouse.io',
+    );
   });
 });
