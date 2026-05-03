@@ -46,7 +46,12 @@
     "format": "biome format --write src/",
     "check": "npm run build && npm run type-check && npm run lint && npm run format:check",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run check && npm test"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
     "zod": "^4.0.0"
