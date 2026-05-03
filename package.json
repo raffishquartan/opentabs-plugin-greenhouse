@@ -52,7 +52,7 @@
     "zod": "^4.0.0"
   },
   "dependencies": {
-    "@opentabs-dev/plugin-sdk": "^0.0.81",
+    "@opentabs-dev/plugin-sdk": "^0.0.106",
     "turndown": "^7.2.1"
   },
   "devDependencies": {
