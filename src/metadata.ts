@@ -1,28 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 raffishquartan
 
-import type { Job } from './api.js';
-
-interface MetadataEntry {
-  name?: unknown;
-  value?: unknown;
-}
-
-/**
- * Pull the "Workplace Type" value (Remote / Hybrid / Onsite, etc.) from a
- * Greenhouse job's `metadata[]` array. Returns null when the field is missing,
- * empty, or non-string.
- */
-export function extractWorkplaceType(job: Job): string | null {
-  const entries = (job.metadata ?? []) as MetadataEntry[];
-  for (const entry of entries) {
-    if (typeof entry?.name === 'string' && entry.name.toLowerCase() === 'workplace type') {
-      return typeof entry.value === 'string' ? entry.value : null;
-    }
-  }
-  return null;
-}
-
 export interface SalaryRange {
   min: string;
   max: string;
