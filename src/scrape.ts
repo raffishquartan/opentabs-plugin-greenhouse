@@ -2,6 +2,7 @@
 // Copyright (c) 2026 raffishquartan
 
 import { fetchText as sdkFetchText } from '@opentabs-dev/plugin-sdk';
+import { z } from 'zod';
 
 export type FetchTextLike = (url: string) => Promise<string>;
 
@@ -22,39 +23,55 @@ function defaultFetchText(): FetchTextLike {
   return (url: string) => sdkFetchText(url);
 }
 
-export interface ScrapedJob {
-  id: number;
-  title: string;
-  location: string;
-  absolute_url: string;
-  updated_at: string;
-  published_at: string;
-  requisition_id: string | null;
-  internal_job_id: number | null;
-  is_featured: boolean;
-  department: { id: number; name: string } | null;
-}
+export const ScrapedJobSchema = z
+  .object({
+    id: z.number(),
+    title: z.string(),
+    location: z.string(),
+    absolute_url: z.string(),
+    updated_at: z.string(),
+    published_at: z.string(),
+    requisition_id: z.string().nullable(),
+    internal_job_id: z.number().nullable(),
+    is_featured: z.boolean(),
+    department: z
+      .object({ id: z.number(), name: z.string() })
+      .nullable(),
+  })
+  .passthrough();
 
-export interface ScrapedDepartment {
-  id: number;
-  name: string;
-}
+export const ScrapedDepartmentSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+});
 
-export interface ScrapedOffice {
+export type ScrapedOffice = {
   id: number;
   name: string;
   children: ScrapedOffice[];
-}
+};
 
-export interface ScrapedBoard {
-  board: string;
-  total: number;
-  page: number;
-  totalPages: number;
-  jobs: ScrapedJob[];
-  departments: ScrapedDepartment[];
-  offices: ScrapedOffice[];
-}
+export const ScrapedOfficeSchema: z.ZodType<ScrapedOffice> = z.lazy(() =>
+  z.object({
+    id: z.number(),
+    name: z.string(),
+    children: z.array(ScrapedOfficeSchema),
+  }),
+);
+
+export const ScrapedBoardSchema = z.object({
+  board: z.string(),
+  total: z.number(),
+  page: z.number(),
+  totalPages: z.number(),
+  jobs: z.array(ScrapedJobSchema),
+  departments: z.array(ScrapedDepartmentSchema),
+  offices: z.array(ScrapedOfficeSchema),
+});
+
+export type ScrapedJob = z.infer<typeof ScrapedJobSchema>;
+export type ScrapedDepartment = z.infer<typeof ScrapedDepartmentSchema>;
+export type ScrapedBoard = z.infer<typeof ScrapedBoardSchema>;
 
 const REMIX_CONTEXT_RE = /window\.__remixContext\s*=\s*(\{[\s\S]+?\});\s*<\/script>/;
 
@@ -130,27 +147,36 @@ export function parseBoardPage(html: string): ScrapedBoard {
     return { id: r.id, name: r.name };
   });
   const offices = (route.offices ?? []).map(o => mapOffice(o as RawOffice));
-  return {
+  const candidate = {
     board,
     total,
     page,
     totalPages,
-    jobs: data as ScrapedJob[],
+    jobs: data,
     departments,
     offices,
   };
+  const parsed = ScrapedBoardSchema.safeParse(candidate);
+  if (!parsed.success) {
+    const first = parsed.error.issues[0];
+    const path = first?.path?.join('.') ?? '<root>';
+    throw new Error(`parseBoardPage: contract drift at ${path}: ${first?.message ?? 'unknown'}`);
+  }
+  return parsed.data;
 }
 
-export interface ScrapedJobFull {
-  id: number;
-  title: string;
-  company_name: string;
-  content: string;
-  location: string;
-  absolute_url: string;
-  published_at: string;
-  language: string;
-}
+export const ScrapedJobFullSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  company_name: z.string(),
+  content: z.string(),
+  location: z.string(),
+  absolute_url: z.string(),
+  published_at: z.string(),
+  language: z.string(),
+});
+
+export type ScrapedJobFull = z.infer<typeof ScrapedJobFullSchema>;
 
 interface RawJobPost {
   title?: string;
@@ -177,20 +203,7 @@ export function parseJobPage(html: string): ScrapedJobFull {
   const idRaw = route.jobPostId;
   const id = typeof idRaw === 'string' ? Number(idRaw) : idRaw;
   const post = route.jobPost;
-  if (
-    typeof id !== 'number' ||
-    !Number.isFinite(id) ||
-    typeof post.title !== 'string' ||
-    typeof post.company_name !== 'string' ||
-    typeof post.content !== 'string' ||
-    typeof post.job_post_location !== 'string' ||
-    typeof post.public_url !== 'string' ||
-    typeof post.published_at !== 'string' ||
-    typeof post.language !== 'string'
-  ) {
-    throw new Error('parseJobPage: required jobPost fields missing or wrong type');
-  }
-  return {
+  const candidate = {
     id,
     title: post.title,
     company_name: post.company_name,
@@ -200,6 +213,13 @@ export function parseJobPage(html: string): ScrapedJobFull {
     published_at: post.published_at,
     language: post.language,
   };
+  const parsed = ScrapedJobFullSchema.safeParse(candidate);
+  if (!parsed.success) {
+    const first = parsed.error.issues[0];
+    const path = first?.path?.join('.') ?? '<root>';
+    throw new Error(`parseJobPage: contract drift at ${path}: ${first?.message ?? 'unknown'}`);
+  }
+  return parsed.data;
 }
 
 export async function fetchBoard(token: string, options: FetchBoardOptions = {}): Promise<ScrapedBoard> {

@@ -66,6 +66,11 @@ describe('parseBoardPage', () => {
   it('throws a clear error when __remixContext is not present', () => {
     expect(() => parseBoardPage('<html><body>no remix here</body></html>')).toThrow(/__remixContext not found/);
   });
+
+  it('throws a contract-drift error when a required job field is the wrong type', () => {
+    const drifted = physicsxBoardHtml.replace(/"id":4749980101,"title":"[^"]+"/, '"id":"not-a-number","title":"x"');
+    expect(() => parseBoardPage(drifted)).toThrow(/contract drift|expected/i);
+  });
 });
 
 describe('parseJobPage', () => {
@@ -94,6 +99,11 @@ describe('parseJobPage', () => {
 
   it('throws a clear error when the per-job route is not present', () => {
     expect(() => parseJobPage(physicsxBoardHtml)).toThrow(/jobPost not present/);
+  });
+
+  it('throws a contract-drift error when published_at goes missing', () => {
+    const drifted = physicsxJobHtml.replace(/"published_at":"[^"]+"/, '"published_at":null');
+    expect(() => parseJobPage(drifted)).toThrow(/contract drift|wrong type/i);
   });
 });
 
