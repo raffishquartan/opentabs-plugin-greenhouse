@@ -81,7 +81,7 @@ interface RemixContext {
 
 function extractRemixContext(html: string): RemixContext {
   const m = REMIX_CONTEXT_RE.exec(html);
-  if (!m || !m[1]) throw new Error('parseBoardPage: window.__remixContext not found in HTML');
+  if (!m?.[1]) throw new Error('parseBoardPage: window.__remixContext not found in HTML');
   try {
     return JSON.parse(m[1]) as RemixContext;
   } catch (err) {
