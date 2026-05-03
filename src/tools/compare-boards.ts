@@ -5,7 +5,7 @@ import { ToolError, defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
 import { resolveBoardHost, resolveBoardToken } from '../board.js';
 import { applyJobFilters } from '../filters.js';
-import { type FetchTextLike, type ScrapedJob, fetchBoard } from '../scrape.js';
+import { type FetchTextLike, type ScrapedJob, fetchAllBoardData } from '../scrape.js';
 
 const InputSchema = z.object({
   boards: z
@@ -69,17 +69,8 @@ async function runOneBoard(
   try {
     token = resolveBoardToken({ board: boardArg, currentUrl: deps.currentUrl });
     const host = resolveBoardHost({ board: boardArg, currentUrl: deps.currentUrl });
-    const first = await fetchBoard(token, { fetchText: deps.fetchText, host, page: 1 });
-    const allJobs: ScrapedJob[] = [...first.jobs];
-    if (first.totalPages > 1) {
-      const more = await Promise.all(
-        Array.from({ length: first.totalPages - 1 }, (_unused, i) =>
-          fetchBoard(token, { fetchText: deps.fetchText, host, page: i + 2 }),
-        ),
-      );
-      for (const p of more) allJobs.push(...p.jobs);
-    }
-    const filtered = applyJobFilters(allJobs, filters, first.departments);
+    const { jobs, departments } = await fetchAllBoardData(token, { fetchText: deps.fetchText, host });
+    const filtered = applyJobFilters(jobs, filters, departments);
     return {
       board: token,
       ok: true,

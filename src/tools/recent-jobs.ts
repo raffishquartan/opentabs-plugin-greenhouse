@@ -4,7 +4,7 @@
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
 import { resolveBoardHost, resolveBoardToken } from '../board.js';
-import { type FetchTextLike, type ScrapedJob, fetchBoard } from '../scrape.js';
+import { type FetchTextLike, fetchAllBoardData } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z.string().optional().describe('Board token or full job-board URL. Optional.'),
@@ -36,24 +36,10 @@ export interface RecentJobsDeps {
   currentUrl?: string;
 }
 
-async function fetchAllJobs(token: string, deps: RecentJobsDeps, host: string): Promise<ScrapedJob[]> {
-  const first = await fetchBoard(token, { fetchText: deps.fetchText, host, page: 1 });
-  const all: ScrapedJob[] = [...first.jobs];
-  if (first.totalPages > 1) {
-    const more = await Promise.all(
-      Array.from({ length: first.totalPages - 1 }, (_unused, i) =>
-        fetchBoard(token, { fetchText: deps.fetchText, host, page: i + 2 }),
-      ),
-    );
-    for (const p of more) all.push(...p.jobs);
-  }
-  return all;
-}
-
 export async function runRecentJobs(input: RecentJobsInput, deps: RecentJobsDeps = {}): Promise<RecentJobsOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
-  const allJobs = await fetchAllJobs(token, deps, host);
+  const { jobs: allJobs } = await fetchAllBoardData(token, { fetchText: deps.fetchText, host });
   let jobs = [...allJobs].sort((a, b) =>
     a.published_at > b.published_at ? -1 : a.published_at < b.published_at ? 1 : 0,
   );

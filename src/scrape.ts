@@ -230,6 +230,38 @@ export async function fetchBoard(token: string, options: FetchBoardOptions = {})
   return parseBoardPage(html);
 }
 
+export interface AllBoardData {
+  jobs: ScrapedJob[];
+  departments: ScrapedDepartment[];
+  offices: ScrapedOffice[];
+  total: number;
+  totalPages: number;
+}
+
+/**
+ * Fetch every page of a board's jobs (Remix paginates at 50 jobs/page) and
+ * concatenate. Departments and offices come from page 1 - they are taxonomy,
+ * not paginated. Use this whenever a tool needs the *whole* board (counts,
+ * filters, search) rather than just the visible page.
+ */
+export async function fetchAllBoardData(token: string, options: FetchBoardOptions = {}): Promise<AllBoardData> {
+  const first = await fetchBoard(token, { ...options, page: 1 });
+  const allJobs: ScrapedJob[] = [...first.jobs];
+  if (first.totalPages > 1) {
+    const more = await Promise.all(
+      Array.from({ length: first.totalPages - 1 }, (_unused, i) => fetchBoard(token, { ...options, page: i + 2 })),
+    );
+    for (const p of more) allJobs.push(...p.jobs);
+  }
+  return {
+    jobs: allJobs,
+    departments: first.departments,
+    offices: first.offices,
+    total: first.total,
+    totalPages: first.totalPages,
+  };
+}
+
 export async function fetchJob(token: string, id: number, options: FetchJobOptions = {}): Promise<ScrapedJobFull> {
   const ft = options.fetchText ?? defaultFetchText();
   const host = options.host ?? DEFAULT_HOST;

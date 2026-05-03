@@ -4,7 +4,7 @@
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
 import { resolveBoardHost, resolveBoardToken } from '../board.js';
-import { type FetchTextLike, fetchBoard } from '../scrape.js';
+import { type FetchTextLike, fetchAllBoardData } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z
@@ -16,7 +16,9 @@ const InputSchema = z.object({
 const DeptSummarySchema = z.object({
   id: z.number(),
   name: z.string(),
-  jobs_count: z.number().describe('Number of jobs on this page whose department.id matches this id.'),
+  jobs_count: z
+    .number()
+    .describe('Number of jobs on the board whose department.id matches this id (across all pages).'),
 });
 
 const OutputSchema = z.object({
@@ -38,7 +40,7 @@ export async function runListDepartments(
 ): Promise<ListDepartmentsOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
-  const board = await fetchBoard(token, { fetchText: deps.fetchText, host });
+  const board = await fetchAllBoardData(token, { fetchText: deps.fetchText, host });
   const counts = new Map<number, number>();
   for (const job of board.jobs) {
     if (job.department) counts.set(job.department.id, (counts.get(job.department.id) ?? 0) + 1);

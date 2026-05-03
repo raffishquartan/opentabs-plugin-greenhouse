@@ -4,7 +4,7 @@
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
 import { resolveBoardHost, resolveBoardToken } from '../board.js';
-import { type FetchTextLike, fetchBoard } from '../scrape.js';
+import { type FetchTextLike, fetchAllBoardData } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z.string().optional().describe('Board token or full job-board URL. Optional.'),
@@ -31,7 +31,7 @@ export interface ListTitlesDeps {
 export async function runListTitles(input: ListTitlesInput, deps: ListTitlesDeps = {}): Promise<ListTitlesOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
-  const board = await fetchBoard(token, { fetchText: deps.fetchText, host });
+  const board = await fetchAllBoardData(token, { fetchText: deps.fetchText, host });
   const counts = new Map<string, number>();
   for (const job of board.jobs) {
     const title = job.title?.trim();
@@ -48,7 +48,7 @@ export const listTitles = defineTool({
   name: 'list_titles',
   displayName: 'List Titles',
   description:
-    'Return distinct job titles across all jobs on the first page of a Greenhouse public job board, with counts. Useful for spotting common role families and for shaping a title_contains filter on list_jobs.',
+    'Return distinct job titles across all jobs on a Greenhouse public job board, with counts. Auto-paginates so counts cover the whole board. Useful for spotting common role families and for shaping a title_contains filter on list_jobs.',
   icon: 'list',
   group: 'Taxonomy',
   input: InputSchema,

@@ -5,7 +5,7 @@ import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
 import { resolveBoardHost, resolveBoardToken } from '../board.js';
 import { applyJobFilters } from '../filters.js';
-import { type FetchTextLike, type ScrapedJob, fetchBoard } from '../scrape.js';
+import { type FetchTextLike, type ScrapedJob, fetchAllBoardData } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z
@@ -64,32 +64,10 @@ function summarise(jobs: ScrapedJob[]): ListJobsOutput['jobs'] {
   }));
 }
 
-async function fetchAllJobs(
-  token: string,
-  deps: ListJobsDeps,
-  host: string,
-): Promise<{ jobs: ScrapedJob[]; departments: ListJobsDepsExt['departments'] }> {
-  const first = await fetchBoard(token, { fetchText: deps.fetchText, host, page: 1 });
-  const all: ScrapedJob[] = [...first.jobs];
-  if (first.totalPages > 1) {
-    const more = await Promise.all(
-      Array.from({ length: first.totalPages - 1 }, (_unused, i) =>
-        fetchBoard(token, { fetchText: deps.fetchText, host, page: i + 2 }),
-      ),
-    );
-    for (const p of more) all.push(...p.jobs);
-  }
-  return { jobs: all, departments: first.departments };
-}
-
-interface ListJobsDepsExt {
-  departments: import('../scrape.js').ScrapedDepartment[];
-}
-
 export async function runListJobs(input: ListJobsInput, deps: ListJobsDeps = {}): Promise<ListJobsOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
-  const { jobs, departments } = await fetchAllJobs(token, deps, host);
+  const { jobs, departments } = await fetchAllBoardData(token, { fetchText: deps.fetchText, host });
   const filtered = applyJobFilters(
     jobs,
     {

@@ -4,7 +4,7 @@
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
 import { resolveBoardHost, resolveBoardToken } from '../board.js';
-import { type FetchTextLike, fetchBoard } from '../scrape.js';
+import { type FetchTextLike, fetchAllBoardData } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z.string().optional().describe('Board token or full job-board URL. Optional.'),
@@ -34,7 +34,7 @@ export async function runListLocations(
 ): Promise<ListLocationsOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
-  const board = await fetchBoard(token, { fetchText: deps.fetchText, host });
+  const board = await fetchAllBoardData(token, { fetchText: deps.fetchText, host });
   const counts = new Map<string, number>();
   for (const job of board.jobs) {
     const name = job.location?.trim();
@@ -51,7 +51,7 @@ export const listLocations = defineTool({
   name: 'list_locations',
   displayName: 'List Locations',
   description:
-    'Return the distinct posted-location strings (e.g. "London, UK", "Remote - Americas") across all jobs on the first page of a Greenhouse public job board, with counts. Locations are free-text per-job so this is the only authoritative source. Useful for shaping a location_contains filter on list_jobs.',
+    'Return the distinct posted-location strings (e.g. "London, UK", "Remote - Americas") across all jobs on a Greenhouse public job board, with counts. Auto-paginates so counts cover the whole board. Locations are free-text per-job so this is the only authoritative source. Useful for shaping a location_contains filter on list_jobs.',
   icon: 'map-pin',
   group: 'Taxonomy',
   input: InputSchema,

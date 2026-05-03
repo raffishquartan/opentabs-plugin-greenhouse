@@ -4,7 +4,7 @@
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
 import { resolveBoardHost, resolveBoardToken } from '../board.js';
-import { type FetchTextLike, type ScrapedJob, fetchBoard } from '../scrape.js';
+import { type FetchTextLike, type ScrapedJob, fetchAllBoardData } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z.string().optional().describe('Board token or full job-board URL. Optional.'),
@@ -41,24 +41,10 @@ function tally(jobs: ScrapedJob[], pick: (j: ScrapedJob) => string[]): Array<{ n
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
-async function fetchAllJobs(token: string, deps: SummaryDeps, host: string): Promise<ScrapedJob[]> {
-  const first = await fetchBoard(token, { fetchText: deps.fetchText, host, page: 1 });
-  const all: ScrapedJob[] = [...first.jobs];
-  if (first.totalPages > 1) {
-    const more = await Promise.all(
-      Array.from({ length: first.totalPages - 1 }, (_unused, i) =>
-        fetchBoard(token, { fetchText: deps.fetchText, host, page: i + 2 }),
-      ),
-    );
-    for (const p of more) all.push(...p.jobs);
-  }
-  return all;
-}
-
 export async function runSummary(input: SummaryInput, deps: SummaryDeps = {}): Promise<SummaryOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
   const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
-  const jobs = await fetchAllJobs(token, deps, host);
+  const { jobs } = await fetchAllBoardData(token, { fetchText: deps.fetchText, host });
   return {
     board: token,
     total: jobs.length,
