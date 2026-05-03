@@ -3,10 +3,8 @@
 
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
-import { fetchJobs } from '../api.js';
-import type { FetchLike, Job } from '../api.js';
-import { resolveBoardToken } from '../board.js';
-import { extractWorkplaceType } from '../metadata.js';
+import { resolveBoardHost, resolveBoardToken } from '../board.js';
+import { type FetchTextLike, type ScrapedJob, fetchBoard } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z.string().optional().describe('Board token or full job-board URL. Optional.'),
@@ -18,20 +16,18 @@ const OutputSchema = z.object({
   board: z.string(),
   total: z.number(),
   by_department: z.array(FacetEntrySchema),
-  by_office: z.array(FacetEntrySchema),
   by_location: z.array(FacetEntrySchema),
-  by_workplace_type: z.array(FacetEntrySchema),
 });
 
 export type SummaryInput = z.infer<typeof InputSchema>;
 export type SummaryOutput = z.infer<typeof OutputSchema>;
 
 export interface SummaryDeps {
-  fetchImpl?: FetchLike;
+  fetchText?: FetchTextLike;
   currentUrl?: string;
 }
 
-function tally(jobs: Job[], pick: (j: Job) => string[]): Array<{ name: string; count: number }> {
+function tally(jobs: ScrapedJob[], pick: (j: ScrapedJob) => string[]): Array<{ name: string; count: number }> {
   const counts = new Map<string, number>();
   for (const j of jobs) {
     for (const name of pick(j)) {
@@ -45,20 +41,29 @@ function tally(jobs: Job[], pick: (j: Job) => string[]): Array<{ name: string; c
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
+async function fetchAllJobs(token: string, deps: SummaryDeps, host: string): Promise<ScrapedJob[]> {
+  const first = await fetchBoard(token, { fetchText: deps.fetchText, host, page: 1 });
+  const all: ScrapedJob[] = [...first.jobs];
+  if (first.totalPages > 1) {
+    const more = await Promise.all(
+      Array.from({ length: first.totalPages - 1 }, (_unused, i) =>
+        fetchBoard(token, { fetchText: deps.fetchText, host, page: i + 2 }),
+      ),
+    );
+    for (const p of more) all.push(...p.jobs);
+  }
+  return all;
+}
+
 export async function runSummary(input: SummaryInput, deps: SummaryDeps = {}): Promise<SummaryOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
-  const data = await fetchJobs(token, deps.fetchImpl);
-  const jobs = data.jobs;
+  const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
+  const jobs = await fetchAllJobs(token, deps, host);
   return {
     board: token,
     total: jobs.length,
-    by_department: tally(jobs, j => j.departments.map(d => d.name)),
-    by_office: tally(jobs, j => j.offices.map(o => o.name)),
-    by_location: tally(jobs, j => [j.location.name]),
-    by_workplace_type: tally(jobs, j => {
-      const wt = extractWorkplaceType(j);
-      return wt ? [wt] : [];
-    }),
+    by_department: tally(jobs, j => (j.department ? [j.department.name] : [])),
+    by_location: tally(jobs, j => [j.location]),
   };
 }
 
@@ -66,7 +71,7 @@ export const summary = defineTool({
   name: 'summary',
   displayName: 'Board Summary',
   description:
-    'Return a one-shot summary of a Greenhouse public job board: total jobs plus counts by department, office, location and workplace type. Useful for orienting against a new company in one call.',
+    'Return a one-shot summary of a Greenhouse public job board: total jobs plus counts by department and location. Useful for orienting against a new company in one call.',
   icon: 'pie-chart',
   group: 'Taxonomy',
   input: InputSchema,

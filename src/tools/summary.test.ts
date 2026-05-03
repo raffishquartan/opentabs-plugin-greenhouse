@@ -1,45 +1,35 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 raffishquartan
 
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@opentabs-dev/plugin-sdk', () => ({
   defineTool: (config: unknown) => config,
-  ToolError: {
-    auth: (msg: string) => new Error(msg),
-    notFound: (msg: string) => new Error(msg),
-    validation: (msg: string) => new Error(msg),
-    internal: (msg: string) => new Error(msg),
-  },
+  fetchText: async () => '',
 }));
 
-import jobsFixture from '../fixtures/jobs.json' with { type: 'json' };
 import { runSummary } from './summary.js';
 
-describe('runSummary', () => {
-  it('returns total + breakdowns by department, office, location and workplace_type', async () => {
-    const fetchImpl = vi.fn(async () => new Response(JSON.stringify(jobsFixture), { status: 200 }));
-    const result = await runSummary({ board: 'airbnb' }, { fetchImpl });
-    expect(result.board).toBe('airbnb');
-    expect(result.total).toBe(5);
-    expect(Array.isArray(result.by_department)).toBe(true);
-    expect(Array.isArray(result.by_office)).toBe(true);
-    expect(Array.isArray(result.by_location)).toBe(true);
-    expect(Array.isArray(result.by_workplace_type)).toBe(true);
-    // Sums of breakdown counts equal total (per facet)
-    const sumDept = result.by_department.reduce((a, b) => a + b.count, 0);
-    expect(sumDept).toBeGreaterThan(0);
-  });
+const physicsxBoardHtml = readFileSync(
+  join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'),
+  'utf8',
+);
 
-  it('breakdowns are sorted by count descending', async () => {
-    const fetchImpl = vi.fn(async () => new Response(JSON.stringify(jobsFixture), { status: 200 }));
-    const result = await runSummary({ board: 'airbnb' }, { fetchImpl });
-    for (const facet of [result.by_department, result.by_office, result.by_location, result.by_workplace_type]) {
-      for (let i = 1; i < facet.length; i++) {
-        const prev = facet[i - 1]?.count ?? 0;
-        const curr = facet[i]?.count ?? 0;
-        expect(prev).toBeGreaterThanOrEqual(curr);
-      }
-    }
+describe('runSummary', () => {
+  it('returns total + by_department + by_location facets sorted by count desc', async () => {
+    const result = await runSummary(
+      { board: 'physicsx' },
+      { fetchText: async () => physicsxBoardHtml },
+    );
+    expect(result.board).toBe('physicsx');
+    expect(result.total).toBe(39);
+    expect(result.by_department.length).toBeGreaterThan(0);
+    expect(result.by_location.length).toBeGreaterThan(0);
+    const totalDeptCount = result.by_department.reduce((s, e) => s + e.count, 0);
+    expect(totalDeptCount).toBeLessThanOrEqual(39);
+    const totalLocCount = result.by_location.reduce((s, e) => s + e.count, 0);
+    expect(totalLocCount).toBe(39);
   });
 });

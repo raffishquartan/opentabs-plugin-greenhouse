@@ -3,11 +3,10 @@
 
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
-import { fetchJob } from '../api.js';
-import type { FetchLike } from '../api.js';
-import { resolveBoardToken } from '../board.js';
+import { resolveBoardHost, resolveBoardToken } from '../board.js';
 import { htmlToMarkdown } from '../markdown.js';
-import { extractSalaryRange, extractWorkplaceType } from '../metadata.js';
+import { extractSalaryRange } from '../metadata.js';
+import { type FetchTextLike, fetchJob } from '../scrape.js';
 
 const InputSchema = z.object({
   id: z.number().describe('The numeric Greenhouse job id (e.g. 7649441).'),
@@ -16,8 +15,6 @@ const InputSchema = z.object({
     .optional()
     .describe('Board token or full job-board URL. Optional - if omitted the board is inferred from the active tab.'),
 });
-
-const RefSchema = z.object({ id: z.number(), name: z.string() });
 
 const SalaryRangeSchema = z.object({
   min: z.string(),
@@ -30,44 +27,39 @@ const SalaryRangeSchema = z.object({
 const OutputSchema = z.object({
   id: z.number(),
   title: z.string(),
+  company_name: z.string(),
   location: z.string(),
-  offices: z.array(RefSchema),
-  departments: z.array(RefSchema),
   absolute_url: z.string(),
-  updated_at: z.string(),
-  first_published: z.string(),
-  workplace_type: z.string().nullable().describe('Workplace type extracted from metadata, or null if not provided.'),
+  published_at: z.string(),
+  language: z.string(),
   salary_range: SalaryRangeSchema.nullable().describe(
     'Best-effort salary range extracted from the description body, or null if absent.',
   ),
   content_markdown: z.string().describe('Job description converted from HTML to markdown.'),
-  metadata: z.array(z.unknown()).describe('Greenhouse job metadata fields verbatim from the API.'),
 });
 
 export type GetJobInput = z.infer<typeof InputSchema>;
 export type GetJobOutput = z.infer<typeof OutputSchema>;
 
 export interface GetJobDeps {
-  fetchImpl?: FetchLike;
+  fetchText?: FetchTextLike;
   currentUrl?: string;
 }
 
 export async function runGetJob(input: GetJobInput, deps: GetJobDeps = {}): Promise<GetJobOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
-  const job = await fetchJob(token, input.id, deps.fetchImpl);
+  const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
+  const job = await fetchJob(token, input.id, { fetchText: deps.fetchText, host });
   return {
     id: job.id,
     title: job.title,
-    location: job.location.name,
-    offices: job.offices.map(o => ({ id: o.id, name: o.name })),
-    departments: job.departments.map(d => ({ id: d.id, name: d.name })),
+    company_name: job.company_name,
+    location: job.location,
     absolute_url: job.absolute_url,
-    updated_at: job.updated_at,
-    first_published: job.first_published,
-    workplace_type: extractWorkplaceType(job),
+    published_at: job.published_at,
+    language: job.language,
     salary_range: extractSalaryRange(job.content),
     content_markdown: htmlToMarkdown(job.content),
-    metadata: job.metadata ?? [],
   };
 }
 
