@@ -51,6 +51,40 @@ describe('runCompareBoards', () => {
     expect(result.boards[0]?.ok).toBe(true);
     expect(result.boards[1]?.ok).toBe(false);
     expect(result.boards[1]?.error).toMatch(/boom/);
+    expect(result.cross_host_hint).toBeNull();
+  });
+
+  it('classifies HTTP 404 errors as host_mismatch and emits a cross_host_hint', async () => {
+    const fetchText = async (url: string) => {
+      if (url.includes('/physicsx')) return physicsxBoardHtml;
+      // Simulate the SDK's fetchFromPage HTTP 404 message format.
+      throw new Error(`fetchFromPage: HTTP 404 for ${url}: <!DOCTYPE html>...`);
+    };
+    const result = await runCompareBoards(
+      { boards: ['physicsx', 'anthropic'] },
+      { fetchText, currentUrl: 'https://job-boards.eu.greenhouse.io/physicsx' },
+    );
+    expect(result.boards[0]?.ok).toBe(true);
+    const anthropicResult = result.boards[1];
+    expect(anthropicResult?.ok).toBe(false);
+    expect(anthropicResult?.failure_reason).toBe('host_mismatch');
+    expect(anthropicResult?.attempted_host).toBe('https://job-boards.eu.greenhouse.io');
+    expect(anthropicResult?.suggested_hosts).toEqual([
+      'https://boards.greenhouse.io',
+      'https://job-boards.greenhouse.io',
+    ]);
+    expect(anthropicResult?.error).toContain('different Greenhouse region');
+    expect(result.cross_host_hint).toMatch(/anthropic.*different Greenhouse region/);
+    expect(result.cross_host_hint).toContain('https://job-boards.greenhouse.io');
+  });
+
+  it('does not emit cross_host_hint when all boards succeed', async () => {
+    const fetchText = async () => physicsxBoardHtml;
+    const result = await runCompareBoards(
+      { boards: ['physicsx'] },
+      { fetchText, currentUrl: 'https://job-boards.eu.greenhouse.io/physicsx' },
+    );
+    expect(result.cross_host_hint).toBeNull();
   });
 
   it('throws when boards array is empty', async () => {

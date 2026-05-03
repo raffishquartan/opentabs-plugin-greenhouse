@@ -29,6 +29,8 @@ This is a breaking change to the tool input/output schemas - see "Removed" and "
 - `validate_api` now runs two checks (`/board`, `/job`) instead of three (`/jobs`, `/departments`, `/offices`), reflecting the scrape architecture's two HTTP entry points.
 - `summary` returns `by_department` and `by_location` only.
 - `get_job` output: drops `offices`, multi-department, `workplace_type`, `metadata`; gains `company_name`, `language`.
+- `compare_boards` output gains `cross_host_hint` (top-level, nullable) and per-board `failure_reason` / `attempted_host` / `suggested_hosts` fields when a board fails because it lives on a different Greenhouse region than the active tab.
+- `list_departments`, `list_locations`, `list_titles` now auto-paginate so their counts cover the whole board, not just page 1. (Fixes silent under-counting on boards with more than 50 jobs.)
 
 ### Removed
 
@@ -40,7 +42,7 @@ This is a breaking change to the tool input/output schemas - see "Removed" and "
 
 ### Known limitations
 
-- **Cross-host `compare_boards`**: each tool call runs in one tab and can only fetch from that tab's origin. Comparing boards across `job-boards.greenhouse.io` (US) and `job-boards.eu.greenhouse.io` (EU) requires either two tabs (one on each host) with separate calls, or accepting per-board errors when running from a single-host tab.
+- **Cross-host `compare_boards`**: each tool call runs in one tab and can only fetch from that tab's origin. Mixed-host calls now surface per-board `failure_reason: "host_mismatch"` plus a top-level `cross_host_hint` naming the other Greenhouse hosts to try; the calling agent is responsible for opening a tab on one of those hosts and re-issuing the call (with the new `tabId`) or splitting the comparison into per-host calls.
 - **`search_jobs include_content=true`** issues N parallel HTTP requests with no concurrency limit - slow on big boards.
 
 ## [0.0.1] - 2026-04-XX

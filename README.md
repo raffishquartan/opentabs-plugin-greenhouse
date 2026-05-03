@@ -106,7 +106,7 @@ The build emits the adapter bundle into `dist/`. Point your OpenTabs install at 
 
 ## Limitations
 
-- **Cross-host `compare_boards`**: tool calls run in one tab and can only fetch from that tab's origin. To compare boards across `job-boards.greenhouse.io` (US) and `job-boards.eu.greenhouse.io` (EU), open a tab on each host and either pass the right `tabId` per call or split the comparison into two calls. A single mixed-host call returns per-board errors for the boards on the other region.
+- **Cross-host `compare_boards`**: tool calls run in one tab and can only fetch from that tab's origin. A single mixed-host call returns per-board failures with `failure_reason: "host_mismatch"`, plus a top-level `cross_host_hint` string that names the other Greenhouse hosts to try. The calling agent should open a tab on one of the suggested hosts and either re-issue `compare_boards` with that tab's `tabId` (if all remaining boards share that host) or split the comparison into per-host calls.
 - **`search_jobs include_content=true`** issues N parallel HTTP requests with no concurrency limit - fine for small boards (tens of jobs), slow for large ones (hundreds).
 - **`workplace_type`** is not available; Greenhouse doesn't include it in the page's Remix state.
 - **Multi-department jobs** show only one department (the one Greenhouse picked as primary).
