@@ -20,6 +20,33 @@ function tryExtractFromUrl(s: string): string | null {
   }
 }
 
+/**
+ * Derive the Greenhouse host (origin) to scrape against. Prefers the host of
+ * an explicit `board` URL, then the current tab URL, then a US-host default.
+ * Cross-host fetches are blocked by page CSP at runtime, so the host the
+ * scraper uses must match the active tab — getting this wrong is the most
+ * common cause of "Failed to fetch" in production.
+ */
+export function resolveBoardHost(input: ResolveBoardTokenInput): string {
+  if (input.board?.includes('://')) {
+    try {
+      const u = new URL(input.board);
+      if (KNOWN_HOSTS.has(u.hostname)) return `https://${u.hostname}`;
+    } catch {
+      /* fall through */
+    }
+  }
+  if (input.currentUrl) {
+    try {
+      const u = new URL(input.currentUrl);
+      if (KNOWN_HOSTS.has(u.hostname)) return `https://${u.hostname}`;
+    } catch {
+      /* fall through */
+    }
+  }
+  return 'https://job-boards.greenhouse.io';
+}
+
 export function resolveBoardToken(input: ResolveBoardTokenInput): string {
   if (input.board) {
     if (input.board.includes('://')) {
