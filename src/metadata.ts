@@ -39,7 +39,7 @@ export function extractSalaryRange(content: string | null | undefined): SalaryRa
   if (!content) return null;
   const text = decode(content);
   const match = PAY_RANGE_RE.exec(text);
-  if (!match || !match[1] || !match[2]) return null;
+  if (!match?.[1] || !match[2]) return null;
   const min = match[1].trim();
   const max = match[2].trim();
   const titleMatch = PAY_TITLE_RE.exec(text);
