@@ -3,11 +3,9 @@
 
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
-import { fetchJobs } from '../api.js';
-import type { FetchLike, Job } from '../api.js';
-import { resolveBoardToken } from '../board.js';
+import { resolveBoardHost, resolveBoardToken } from '../board.js';
 import { htmlToMarkdown } from '../markdown.js';
-import { extractWorkplaceType } from '../metadata.js';
+import { type FetchTextLike, type ScrapedJob, type ScrapedOffice, fetchAllBoardData, fetchJob } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z.string().optional().describe('Board token or full job-board URL. Optional.'),
@@ -15,7 +13,13 @@ const InputSchema = z.object({
     .string()
     .min(1)
     .describe(
-      'Search string. Case-insensitive substring match across title, location, departments, offices, and the description body.',
+      'Search string. Case-insensitive substring match across title, location, departments, offices, and (optionally) the description body.',
+    ),
+  include_content: z
+    .boolean()
+    .optional()
+    .describe(
+      'When true, ALSO fetches each per-job page so the description body is searched. Slow on large boards (one HTTP per job). Default false.',
     ),
 });
 
@@ -23,11 +27,9 @@ const SearchHitSchema = z.object({
   id: z.number(),
   title: z.string(),
   location: z.string(),
-  offices: z.array(z.string()),
-  departments: z.array(z.string()),
+  department: z.object({ id: z.number(), name: z.string() }).nullable(),
   absolute_url: z.string(),
   updated_at: z.string(),
-  workplace_type: z.string().nullable(),
   matched_in: z.array(z.enum(['title', 'location', 'department', 'office', 'content'])),
 });
 
@@ -42,45 +44,84 @@ export type SearchJobsInput = z.infer<typeof InputSchema>;
 export type SearchJobsOutput = z.infer<typeof OutputSchema>;
 
 export interface SearchJobsDeps {
-  fetchImpl?: FetchLike;
+  fetchText?: FetchTextLike;
   currentUrl?: string;
 }
 
 type MatchField = 'title' | 'location' | 'department' | 'office' | 'content';
 
-function classifyMatches(job: Job, query: string): MatchField[] {
+function flattenOffices(offices: ScrapedOffice[]): string[] {
+  const out: string[] = [];
+  const stack = [...offices];
+  while (stack.length > 0) {
+    const o = stack.pop();
+    if (!o) continue;
+    out.push(o.name);
+    for (const c of o.children) stack.push(c);
+  }
+  return out;
+}
+
+function classifyShallow(job: ScrapedJob, query: string, officeNames: string[]): MatchField[] {
   const matches: MatchField[] = [];
   if (job.title.toLowerCase().includes(query)) matches.push('title');
-  if (job.location.name.toLowerCase().includes(query)) matches.push('location');
-  if (job.departments.some(d => d.name.toLowerCase().includes(query))) matches.push('department');
-  if (job.offices.some(o => o.name.toLowerCase().includes(query))) matches.push('office');
-  if (job.content) {
-    const md = htmlToMarkdown(job.content).toLowerCase();
-    if (md.includes(query)) matches.push('content');
-  }
+  if (job.location.toLowerCase().includes(query)) matches.push('location');
+  if (job.department?.name.toLowerCase().includes(query)) matches.push('department');
+  if (officeNames.some(n => n.toLowerCase().includes(query))) matches.push('office');
   return matches;
 }
 
 export async function runSearchJobs(input: SearchJobsInput, deps: SearchJobsDeps = {}): Promise<SearchJobsOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
-  const data = await fetchJobs(token, deps.fetchImpl);
+  const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
+  const { jobs, offices } = await fetchAllBoardData(token, { fetchText: deps.fetchText, host });
+  const officeNames = flattenOffices(offices);
   const q = input.query.toLowerCase();
+
   const hits: SearchJobsOutput['jobs'] = [];
-  for (const job of data.jobs) {
-    const matched = classifyMatches(job, q);
-    if (matched.length === 0) continue;
-    hits.push({
-      id: job.id,
-      title: job.title,
-      location: job.location.name,
-      offices: job.offices.map(o => o.name),
-      departments: job.departments.map(d => d.name),
-      absolute_url: job.absolute_url,
-      updated_at: job.updated_at,
-      workplace_type: extractWorkplaceType(job),
-      matched_in: matched,
-    });
+  for (const job of jobs) {
+    const matched = classifyShallow(job, q, officeNames);
+    if (matched.length > 0) {
+      hits.push({
+        id: job.id,
+        title: job.title,
+        location: job.location,
+        department: job.department,
+        absolute_url: job.absolute_url,
+        updated_at: job.updated_at,
+        matched_in: matched,
+      });
+    }
   }
+
+  if (input.include_content) {
+    const alreadyHit = new Set(hits.map(h => h.id));
+    const results = await Promise.all(
+      jobs.map(async j => {
+        if (alreadyHit.has(j.id)) return null;
+        try {
+          const full = await fetchJob(token, j.id, { fetchText: deps.fetchText, host });
+          const md = htmlToMarkdown(full.content).toLowerCase();
+          if (!md.includes(q)) return null;
+          return {
+            id: j.id,
+            title: j.title,
+            location: j.location,
+            department: j.department,
+            absolute_url: j.absolute_url,
+            updated_at: j.updated_at,
+            matched_in: ['content'] as MatchField[],
+          };
+        } catch {
+          return null;
+        }
+      }),
+    );
+    for (const r of results) {
+      if (r) hits.push(r);
+    }
+  }
+
   return {
     board: token,
     query: input.query,
@@ -93,7 +134,7 @@ export const searchJobs = defineTool({
   name: 'search_jobs',
   displayName: 'Search Jobs',
   description:
-    'Search across all jobs on a Greenhouse public job board for a substring (case-insensitive). Matches against title, location, department names, office names, and the markdown description body. Reports per-hit which field(s) matched. Use when filter-based list_jobs is too coarse - e.g. searching for "Kubernetes" across all engineering postings.',
+    'Search across all jobs on a Greenhouse public job board for a substring (case-insensitive). Matches against title, location, department name and office names. Pass include_content=true to additionally search the per-job description body — slow on large boards, off by default.',
   icon: 'search',
   group: 'Jobs',
   input: InputSchema,

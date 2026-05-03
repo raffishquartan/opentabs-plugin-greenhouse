@@ -1,13 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 raffishquartan
 
-// Global vitest setup. Runs before each test file and ensures the
-// process-wide response cache in api.ts is empty so cached fixture data
-// from one test does not leak into another.
+// Global vitest setup. v0.1.0 has no process-wide caches so this file is
+// intentionally empty - kept around so vitest.config.ts setupFiles is stable
+// and any future global setup has an obvious home.
 
-import { beforeEach } from 'vitest';
-import { __clearApiCache } from './api.js';
-
-beforeEach(() => {
-  __clearApiCache();
-});
+export {};

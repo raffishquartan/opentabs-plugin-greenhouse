@@ -3,9 +3,8 @@
 
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
-import { fetchJobs } from '../api.js';
-import type { FetchLike } from '../api.js';
-import { resolveBoardToken } from '../board.js';
+import { resolveBoardHost, resolveBoardToken } from '../board.js';
+import { type FetchTextLike, fetchAllBoardData } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z.string().optional().describe('Board token or full job-board URL. Optional.'),
@@ -25,7 +24,7 @@ export type ListLocationsInput = z.infer<typeof InputSchema>;
 export type ListLocationsOutput = z.infer<typeof OutputSchema>;
 
 export interface ListLocationsDeps {
-  fetchImpl?: FetchLike;
+  fetchText?: FetchTextLike;
   currentUrl?: string;
 }
 
@@ -34,10 +33,11 @@ export async function runListLocations(
   deps: ListLocationsDeps = {},
 ): Promise<ListLocationsOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
-  const data = await fetchJobs(token, deps.fetchImpl);
+  const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
+  const board = await fetchAllBoardData(token, { fetchText: deps.fetchText, host });
   const counts = new Map<string, number>();
-  for (const job of data.jobs) {
-    const name = job.location.name?.trim();
+  for (const job of board.jobs) {
+    const name = job.location?.trim();
     if (!name) continue;
     counts.set(name, (counts.get(name) ?? 0) + 1);
   }
@@ -51,7 +51,7 @@ export const listLocations = defineTool({
   name: 'list_locations',
   displayName: 'List Locations',
   description:
-    'Return the distinct posted-location strings (e.g. "London, UK", "Remote - Americas") across all jobs on a Greenhouse public job board, with counts. Locations are free-text per-job so this is the only authoritative source. Useful for shaping a location_contains filter on list_jobs.',
+    'Return the distinct posted-location strings (e.g. "London, UK", "Remote - Americas") across all jobs on a Greenhouse public job board, with counts. Auto-paginates so counts cover the whole board. Locations are free-text per-job so this is the only authoritative source. Useful for shaping a location_contains filter on list_jobs.',
   icon: 'map-pin',
   group: 'Taxonomy',
   input: InputSchema,
