@@ -3,7 +3,7 @@
   "description": "OpenTabs plugin - list and inspect jobs on any Greenhouse-hosted public job board",
   "version": "0.1.0",
   "type": "module",
-  "main": "dist/adapter.iife.js",
+  "main": "dist/index.js",
   "keywords": [
     "opentabs-plugin",
     "opentabs",
