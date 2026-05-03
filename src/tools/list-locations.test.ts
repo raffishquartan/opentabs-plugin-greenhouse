@@ -12,17 +12,11 @@ vi.mock('@opentabs-dev/plugin-sdk', () => ({
 
 import { runListLocations } from './list-locations.js';
 
-const physicsxBoardHtml = readFileSync(
-  join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'),
-  'utf8',
-);
+const physicsxBoardHtml = readFileSync(join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'), 'utf8');
 
 describe('runListLocations', () => {
   it('aggregates distinct posted locations across the page-1 jobs with counts', async () => {
-    const result = await runListLocations(
-      { board: 'physicsx' },
-      { fetchText: async () => physicsxBoardHtml },
-    );
+    const result = await runListLocations({ board: 'physicsx' }, { fetchText: async () => physicsxBoardHtml });
     expect(result.board).toBe('physicsx');
     expect(result.locations.length).toBeGreaterThan(0);
     for (const loc of result.locations) {

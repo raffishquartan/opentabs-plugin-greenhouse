@@ -12,17 +12,11 @@ vi.mock('@opentabs-dev/plugin-sdk', () => ({
 
 import { runSummary } from './summary.js';
 
-const physicsxBoardHtml = readFileSync(
-  join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'),
-  'utf8',
-);
+const physicsxBoardHtml = readFileSync(join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'), 'utf8');
 
 describe('runSummary', () => {
   it('returns total + by_department + by_location facets sorted by count desc', async () => {
-    const result = await runSummary(
-      { board: 'physicsx' },
-      { fetchText: async () => physicsxBoardHtml },
-    );
+    const result = await runSummary({ board: 'physicsx' }, { fetchText: async () => physicsxBoardHtml });
     expect(result.board).toBe('physicsx');
     expect(result.total).toBe(39);
     expect(result.by_department.length).toBeGreaterThan(0);

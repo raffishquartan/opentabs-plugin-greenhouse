@@ -58,9 +58,9 @@ describe('resolveBoardHost', () => {
   });
 
   it('falls back to currentUrl host when board is just a token', () => {
-    expect(
-      resolveBoardHost({ board: 'physicsx', currentUrl: 'https://job-boards.eu.greenhouse.io/physicsx' }),
-    ).toBe('https://job-boards.eu.greenhouse.io');
+    expect(resolveBoardHost({ board: 'physicsx', currentUrl: 'https://job-boards.eu.greenhouse.io/physicsx' })).toBe(
+      'https://job-boards.eu.greenhouse.io',
+    );
   });
 
   it('defaults to job-boards.greenhouse.io when nothing else resolves', () => {

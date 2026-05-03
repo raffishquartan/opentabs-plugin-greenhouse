@@ -12,17 +12,11 @@ vi.mock('@opentabs-dev/plugin-sdk', () => ({
 
 import { runListOffices } from './list-offices.js';
 
-const physicsxBoardHtml = readFileSync(
-  join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'),
-  'utf8',
-);
+const physicsxBoardHtml = readFileSync(join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'), 'utf8');
 
 describe('runListOffices', () => {
   it('returns the office taxonomy preserving the nested children hierarchy', async () => {
-    const result = await runListOffices(
-      { board: 'physicsx' },
-      { fetchText: async () => physicsxBoardHtml },
-    );
+    const result = await runListOffices({ board: 'physicsx' }, { fetchText: async () => physicsxBoardHtml });
     expect(result.board).toBe('physicsx');
     expect(result.offices).toEqual([
       { id: 4036123101, name: 'Singapore', children: [] },

@@ -19,10 +19,7 @@ const physicsxJobHtml = readFileSync(
 
 describe('runGetJob', () => {
   it('returns the job with content rendered as markdown (no raw HTML or entities)', async () => {
-    const result = await runGetJob(
-      { board: 'physicsx', id: 4644845101 },
-      { fetchText: async () => physicsxJobHtml },
-    );
+    const result = await runGetJob({ board: 'physicsx', id: 4644845101 }, { fetchText: async () => physicsxJobHtml });
     expect(result.id).toBe(4644845101);
     expect(result.title).toBe('Senior CFD Engineer - Turbomachinery');
     expect(result.company_name).toBe('PhysicsX');

@@ -8,10 +8,7 @@ import { type FetchTextLike, type ScrapedJob, fetchBoard } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z.string().optional().describe('Board token or full job-board URL. Optional.'),
-  since: z
-    .string()
-    .optional()
-    .describe('ISO-8601 timestamp; only jobs with published_at >= this value are returned.'),
+  since: z.string().optional().describe('ISO-8601 timestamp; only jobs with published_at >= this value are returned.'),
   limit: z.number().int().positive().max(500).optional().describe('Maximum number of jobs to return. Defaults to all.'),
 });
 

@@ -34,9 +34,7 @@ export const ScrapedJobSchema = z
     requisition_id: z.string().nullable(),
     internal_job_id: z.number().nullable(),
     is_featured: z.boolean(),
-    department: z
-      .object({ id: z.number(), name: z.string() })
-      .nullable(),
+    department: z.object({ id: z.number(), name: z.string() }).nullable(),
   })
   .passthrough();
 
@@ -83,7 +81,7 @@ interface RemixContext {
 
 function extractRemixContext(html: string): RemixContext {
   const m = REMIX_CONTEXT_RE.exec(html);
-  if (!m) throw new Error('parseBoardPage: window.__remixContext not found in HTML');
+  if (!m || !m[1]) throw new Error('parseBoardPage: window.__remixContext not found in HTML');
   try {
     return JSON.parse(m[1]) as RemixContext;
   } catch (err) {

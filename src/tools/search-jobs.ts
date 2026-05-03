@@ -66,7 +66,7 @@ function classifyShallow(job: ScrapedJob, query: string, officeNames: string[]):
   const matches: MatchField[] = [];
   if (job.title.toLowerCase().includes(query)) matches.push('title');
   if (job.location.toLowerCase().includes(query)) matches.push('location');
-  if (job.department && job.department.name.toLowerCase().includes(query)) matches.push('department');
+  if (job.department?.name.toLowerCase().includes(query)) matches.push('department');
   if (officeNames.some(n => n.toLowerCase().includes(query))) matches.push('office');
   return matches;
 }

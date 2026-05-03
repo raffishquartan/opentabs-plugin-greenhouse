@@ -86,11 +86,7 @@ describe('applyJobFilters', () => {
   });
 
   it('combines multiple filters (AND semantics)', () => {
-    const out = applyJobFilters(
-      baseJobs,
-      { department: 'Engineering', title_contains: 'senior' },
-      departments,
-    );
+    const out = applyJobFilters(baseJobs, { department: 'Engineering', title_contains: 'senior' }, departments);
     expect(out.map(j => j.id)).toEqual([4]);
   });
 

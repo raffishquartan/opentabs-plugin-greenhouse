@@ -15,9 +15,7 @@ function findDepartment(depts: ScrapedDepartment[], match: string | number): Scr
   if (typeof match === 'number') {
     const found = depts.find(d => d.id === match);
     if (!found) {
-      throw ToolError.validation(
-        `Unknown department id ${match}. Available ids: ${depts.map(d => d.id).join(', ')}`,
-      );
+      throw ToolError.validation(`Unknown department id ${match}. Available ids: ${depts.map(d => d.id).join(', ')}`);
     }
     return found;
   }

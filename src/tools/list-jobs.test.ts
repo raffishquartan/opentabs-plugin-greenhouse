@@ -15,17 +15,11 @@ vi.mock('@opentabs-dev/plugin-sdk', () => ({
 
 import { runListJobs } from './list-jobs.js';
 
-const physicsxBoardHtml = readFileSync(
-  join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'),
-  'utf8',
-);
+const physicsxBoardHtml = readFileSync(join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'), 'utf8');
 
 describe('runListJobs', () => {
   it('returns all jobs from the physicsx fixture (single page) with new shape', async () => {
-    const result = await runListJobs(
-      { board: 'physicsx' },
-      { fetchText: async () => physicsxBoardHtml },
-    );
+    const result = await runListJobs({ board: 'physicsx' }, { fetchText: async () => physicsxBoardHtml });
     expect(result.board).toBe('physicsx');
     expect(result.total).toBe(39);
     expect(result.jobs).toHaveLength(39);

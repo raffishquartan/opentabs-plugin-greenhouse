@@ -12,17 +12,11 @@ vi.mock('@opentabs-dev/plugin-sdk', () => ({
 
 import { runListDepartments } from './list-departments.js';
 
-const physicsxBoardHtml = readFileSync(
-  join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'),
-  'utf8',
-);
+const physicsxBoardHtml = readFileSync(join(__dirname, '..', 'fixtures', 'scrape', 'physicsx-board.html'), 'utf8');
 
 describe('runListDepartments', () => {
   it('returns the flat department taxonomy with jobs_count populated from job assignments', async () => {
-    const result = await runListDepartments(
-      { board: 'physicsx' },
-      { fetchText: async () => physicsxBoardHtml },
-    );
+    const result = await runListDepartments({ board: 'physicsx' }, { fetchText: async () => physicsxBoardHtml });
     expect(result.board).toBe('physicsx');
     expect(result.departments.length).toBe(4);
     const names = result.departments.map(d => d.name).sort();

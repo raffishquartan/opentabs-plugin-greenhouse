@@ -27,9 +27,7 @@ describe('runSearchJobs', () => {
     expect(result.jobs.length).toBeGreaterThan(0);
     for (const j of result.jobs) {
       expect(j.matched_in.length).toBeGreaterThan(0);
-      expect(['title', 'location', 'department', 'office', 'content']).toEqual(
-        expect.arrayContaining(j.matched_in),
-      );
+      expect(['title', 'location', 'department', 'office', 'content']).toEqual(expect.arrayContaining(j.matched_in));
     }
   });
 
@@ -39,7 +37,11 @@ describe('runSearchJobs', () => {
       { fetchText: async () => physicsxBoardHtml },
     );
     expect(result.jobs.length).toBeGreaterThan(0);
-    expect(result.jobs.every(j => j.matched_in.includes('department') || j.matched_in.includes('title') || j.matched_in.includes('location'))).toBe(true);
+    expect(
+      result.jobs.every(
+        j => j.matched_in.includes('department') || j.matched_in.includes('title') || j.matched_in.includes('location'),
+      ),
+    ).toBe(true);
   });
 
   it('matches against office names from the office taxonomy', async () => {

@@ -159,7 +159,6 @@ describe('fetchJob', () => {
 });
 
 describe('parseBoardPage (continued)', () => {
-
   it('extracts the office taxonomy from physicsx with hierarchy', () => {
     const { offices } = parseBoardPage(physicsxBoardHtml);
     expect(offices).toEqual([
