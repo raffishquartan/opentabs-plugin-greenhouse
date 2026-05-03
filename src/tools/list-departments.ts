@@ -3,9 +3,8 @@
 
 import { defineTool } from '@opentabs-dev/plugin-sdk';
 import { z } from 'zod';
-import { fetchDepartments } from '../api.js';
-import type { FetchLike } from '../api.js';
-import { resolveBoardToken } from '../board.js';
+import { resolveBoardHost, resolveBoardToken } from '../board.js';
+import { type FetchTextLike, fetchBoard } from '../scrape.js';
 
 const InputSchema = z.object({
   board: z
@@ -17,9 +16,7 @@ const InputSchema = z.object({
 const DeptSummarySchema = z.object({
   id: z.number(),
   name: z.string(),
-  parent_id: z.number().nullable(),
-  child_ids: z.array(z.number()),
-  jobs_count: z.number().describe('Number of jobs directly attributed to this department in the API response.'),
+  jobs_count: z.number().describe('Number of jobs on this page whose department.id matches this id.'),
 });
 
 const OutputSchema = z.object({
@@ -31,7 +28,7 @@ export type ListDepartmentsInput = z.infer<typeof InputSchema>;
 export type ListDepartmentsOutput = z.infer<typeof OutputSchema>;
 
 export interface ListDepartmentsDeps {
-  fetchImpl?: FetchLike;
+  fetchText?: FetchTextLike;
   currentUrl?: string;
 }
 
@@ -40,15 +37,18 @@ export async function runListDepartments(
   deps: ListDepartmentsDeps = {},
 ): Promise<ListDepartmentsOutput> {
   const token = resolveBoardToken({ board: input.board, currentUrl: deps.currentUrl });
-  const data = await fetchDepartments(token, deps.fetchImpl);
+  const host = resolveBoardHost({ board: input.board, currentUrl: deps.currentUrl });
+  const board = await fetchBoard(token, { fetchText: deps.fetchText, host });
+  const counts = new Map<number, number>();
+  for (const job of board.jobs) {
+    if (job.department) counts.set(job.department.id, (counts.get(job.department.id) ?? 0) + 1);
+  }
   return {
     board: token,
-    departments: data.departments.map(d => ({
+    departments: board.departments.map(d => ({
       id: d.id,
       name: d.name,
-      parent_id: d.parent_id,
-      child_ids: d.child_ids,
-      jobs_count: d.jobs?.length ?? 0,
+      jobs_count: counts.get(d.id) ?? 0,
     })),
   };
 }
@@ -57,7 +57,7 @@ export const listDepartments = defineTool({
   name: 'list_departments',
   displayName: 'List Departments',
   description:
-    'Return the department taxonomy for a Greenhouse public job board, including parent/child relationships. Useful for discovering valid department filters before calling list_jobs.',
+    'Return the department taxonomy for a Greenhouse public job board. Useful for discovering valid department filters before calling list_jobs. Note: the same-origin scraper does not expose parent/child relationships, so departments are returned as a flat list.',
   icon: 'folder-tree',
   group: 'Taxonomy',
   input: InputSchema,
