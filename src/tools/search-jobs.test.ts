@@ -1,60 +1,87 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 raffishquartan
 
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@opentabs-dev/plugin-sdk', () => ({
   defineTool: (config: unknown) => config,
-  ToolError: {
-    auth: (msg: string) => new Error(msg),
-    notFound: (msg: string) => new Error(msg),
-    validation: (msg: string) => new Error(msg),
-    internal: (msg: string) => new Error(msg),
-  },
+  fetchText: async () => '',
 }));
 
-import jobsFixture from '../fixtures/jobs.json' with { type: 'json' };
 import { runSearchJobs } from './search-jobs.js';
 
-const fetchOk = () => vi.fn(async () => new Response(JSON.stringify(jobsFixture), { status: 200 }));
+const FIXTURE_DIR = join(__dirname, '..', 'fixtures', 'scrape');
+const physicsxBoardHtml = readFileSync(join(FIXTURE_DIR, 'physicsx-board.html'), 'utf8');
+const physicsxJobHtml = readFileSync(join(FIXTURE_DIR, 'physicsx-job-4644845101.html'), 'utf8');
 
 describe('runSearchJobs', () => {
-  it('matches against the title', async () => {
-    const result = await runSearchJobs({ board: 'airbnb', query: 'account' }, { fetchImpl: fetchOk() });
-    for (const j of result.jobs) {
-      const haystack = `${j.title} ${j.location} ${j.offices.join(' ')} ${j.departments.join(' ')}`.toLowerCase();
-      expect(haystack.includes('account') || j.matched_in.includes('content')).toBe(true);
-    }
-  });
-
-  it('matches against the description body when no other field matches', async () => {
-    const fetchImpl = fetchOk();
-    // pick a phrase that appears in the airbnb sample content body but not in titles/depts/offices/locations
-    const result = await runSearchJobs({ board: 'airbnb', query: 'San Francisco' }, { fetchImpl });
-    expect(result.total).toBeGreaterThan(0);
-    expect(result.jobs[0]?.matched_in).toContain('content');
-  });
-
-  it('reports matched_in field set per match', async () => {
-    const result = await runSearchJobs({ board: 'airbnb', query: 'sales' }, { fetchImpl: fetchOk() });
-    for (const j of result.jobs) {
-      expect(Array.isArray(j.matched_in)).toBe(true);
-      expect(j.matched_in.length).toBeGreaterThan(0);
-    }
-  });
-
-  it('returns no jobs when query matches nothing', async () => {
+  it('matches title across all jobs and reports matched_in', async () => {
     const result = await runSearchJobs(
-      { board: 'airbnb', query: 'zzzzzznothingmatcheszzzzzz' },
-      { fetchImpl: fetchOk() },
+      { board: 'physicsx', query: 'engineer' },
+      { fetchText: async () => physicsxBoardHtml },
+    );
+    expect(result.board).toBe('physicsx');
+    expect(result.query).toBe('engineer');
+    expect(result.jobs.length).toBeGreaterThan(0);
+    for (const j of result.jobs) {
+      expect(j.matched_in.length).toBeGreaterThan(0);
+      expect(['title', 'location', 'department', 'office', 'content']).toEqual(
+        expect.arrayContaining(j.matched_in),
+      );
+    }
+  });
+
+  it('matches against department names', async () => {
+    const result = await runSearchJobs(
+      { board: 'physicsx', query: 'delivery' },
+      { fetchText: async () => physicsxBoardHtml },
+    );
+    expect(result.jobs.length).toBeGreaterThan(0);
+    expect(result.jobs.every(j => j.matched_in.includes('department') || j.matched_in.includes('title') || j.matched_in.includes('location'))).toBe(true);
+  });
+
+  it('matches against office names from the office taxonomy', async () => {
+    const result = await runSearchJobs(
+      { board: 'physicsx', query: 'singapore' },
+      { fetchText: async () => physicsxBoardHtml },
+    );
+    expect(result.jobs.length).toBeGreaterThan(0);
+    for (const j of result.jobs) {
+      const acceptable = j.matched_in.includes('office') || j.matched_in.includes('location');
+      expect(acceptable).toBe(true);
+    }
+  });
+
+  it('returns no hits when nothing matches', async () => {
+    const result = await runSearchJobs(
+      { board: 'physicsx', query: 'definitely-nothing-zzzz' },
+      { fetchText: async () => physicsxBoardHtml },
     );
     expect(result.total).toBe(0);
     expect(result.jobs).toEqual([]);
   });
 
-  it('is case-insensitive', async () => {
-    const a = await runSearchJobs({ board: 'airbnb', query: 'ACCOUNT' }, { fetchImpl: fetchOk() });
-    const b = await runSearchJobs({ board: 'airbnb', query: 'account' }, { fetchImpl: fetchOk() });
-    expect(a.total).toBe(b.total);
+  it('also searches content body when include_content is true', async () => {
+    let boardCalls = 0;
+    let jobCalls = 0;
+    const fetchText = async (url: string): Promise<string> => {
+      if (url.includes('/jobs/')) {
+        jobCalls++;
+        return physicsxJobHtml;
+      }
+      boardCalls++;
+      return physicsxBoardHtml;
+    };
+    // The content body for the per-job fixture mentions "CFD" — pick a query
+    // that should NOT match shallow fields but should match content.
+    const result = await runSearchJobs(
+      { board: 'physicsx', query: 'turbomachinery', include_content: true },
+      { fetchText },
+    );
+    expect(boardCalls).toBeGreaterThan(0);
+    expect(jobCalls).toBeGreaterThan(0);
+    expect(result.jobs.some(j => j.matched_in.includes('content'))).toBe(true);
   });
 });

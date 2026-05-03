@@ -1,70 +1,77 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 raffishquartan
 
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@opentabs-dev/plugin-sdk', () => ({
   defineTool: (config: unknown) => config,
+  fetchText: async () => '',
   ToolError: {
-    auth: (msg: string) => new Error(msg),
-    notFound: (msg: string) => new Error(msg),
     validation: (msg: string) => new Error(msg),
-    internal: (msg: string) => new Error(msg),
   },
 }));
 
-import jobsFixture from '../fixtures/jobs.json' with { type: 'json' };
-import departmentsFixture from '../fixtures/departments.json' with { type: 'json' };
-import officesFixture from '../fixtures/offices.json' with { type: 'json' };
 import { runCompareBoards } from './compare-boards.js';
 
-function makeFetch(opts: { failBoard?: string } = {}) {
-  return vi.fn(async (url: string) => {
-    if (opts.failBoard && url.includes(`/boards/${opts.failBoard}/`)) {
-      return new Response('not found', { status: 404 });
-    }
-    if (url.endsWith('/departments')) return new Response(JSON.stringify(departmentsFixture), { status: 200 });
-    if (url.endsWith('/offices')) return new Response(JSON.stringify(officesFixture), { status: 200 });
-    if (url.includes('/jobs')) return new Response(JSON.stringify(jobsFixture), { status: 200 });
-    return new Response('unknown', { status: 500 });
-  });
-}
+const FIXTURE_DIR = join(__dirname, '..', 'fixtures', 'scrape');
+const physicsxBoardHtml = readFileSync(join(FIXTURE_DIR, 'physicsx-board.html'), 'utf8');
+const anthropicBoardHtml = readFileSync(join(FIXTURE_DIR, 'anthropic-board.html'), 'utf8');
 
 describe('runCompareBoards', () => {
-  it('sweeps multiple boards and returns per-board results', async () => {
-    const result = await runCompareBoards({ boards: ['airbnb', 'stripe'] }, { fetchImpl: makeFetch() });
+  it('queries multiple boards in parallel and reports per-board success', async () => {
+    const fetchText = async (url: string) => {
+      if (url.includes('/physicsx')) return physicsxBoardHtml;
+      if (url.includes('/anthropic')) return anthropicBoardHtml;
+      throw new Error(`unexpected url: ${url}`);
+    };
+    const result = await runCompareBoards(
+      { boards: ['physicsx', 'anthropic'] },
+      { fetchText, currentUrl: 'https://job-boards.eu.greenhouse.io/physicsx' },
+    );
     expect(result.boards).toHaveLength(2);
-    expect(result.boards.every(b => b.ok)).toBe(true);
-    expect(result.total_across_boards).toBe(10); // 5 from each fixture
+    for (const b of result.boards) {
+      expect(b.ok).toBe(true);
+      expect(b.total).toBeGreaterThan(0);
+    }
+    const sumPerBoard = result.boards.reduce((s, b) => s + (b.total ?? 0), 0);
+    expect(result.total_across_boards).toBe(sumPerBoard);
   });
 
   it('reports per-board failure without failing the whole call', async () => {
+    const fetchText = async (url: string) => {
+      if (url.includes('/physicsx')) return physicsxBoardHtml;
+      throw new Error('boom for the other board');
+    };
     const result = await runCompareBoards(
-      { boards: ['airbnb', 'broken'] },
-      { fetchImpl: makeFetch({ failBoard: 'broken' }) },
+      { boards: ['physicsx', 'broken'] },
+      { fetchText, currentUrl: 'https://job-boards.eu.greenhouse.io/physicsx' },
     );
-    const ok = result.boards.find(b => b.board === 'airbnb');
-    const fail = result.boards.find(b => b.board === 'broken');
-    expect(ok?.ok).toBe(true);
-    expect(fail?.ok).toBe(false);
-    expect(fail?.error).toMatch(/not found/i);
-    expect(result.total_across_boards).toBe(5);
+    expect(result.boards[0]?.ok).toBe(true);
+    expect(result.boards[1]?.ok).toBe(false);
+    expect(result.boards[1]?.error).toMatch(/boom/);
   });
 
-  it('applies the same filter to each board', async () => {
+  it('throws when boards array is empty', async () => {
+    await expect(runCompareBoards({ boards: [] })).rejects.toThrow(/at least one board/);
+  });
+
+  it('applies title_contains filter to each board', async () => {
+    const fetchText = async (url: string) => {
+      if (url.includes('/physicsx')) return physicsxBoardHtml;
+      throw new Error('only physicsx');
+    };
     const result = await runCompareBoards(
-      { boards: ['airbnb', 'stripe'], title_contains: 'manager' },
-      { fetchImpl: makeFetch() },
+      { boards: ['physicsx'], title_contains: 'engineer' },
+      { fetchText, currentUrl: 'https://job-boards.eu.greenhouse.io/physicsx' },
     );
-    for (const b of result.boards) {
-      if (!b.ok) continue;
-      for (const j of b.jobs ?? []) {
-        expect(j.title.toLowerCase()).toContain('manager');
+    const board = result.boards[0];
+    expect(board?.ok).toBe(true);
+    if (board?.jobs) {
+      for (const j of board.jobs) {
+        expect(j.title.toLowerCase()).toContain('engineer');
       }
     }
-  });
-
-  it('rejects an empty boards array', async () => {
-    await expect(runCompareBoards({ boards: [] }, { fetchImpl: makeFetch() })).rejects.toThrow(/at least one/i);
   });
 });
