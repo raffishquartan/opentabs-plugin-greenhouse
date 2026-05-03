@@ -95,6 +95,8 @@ Every parsed Remix payload is validated against a Zod schema before tools see it
 
 You need a working OpenTabs install (browser extension + MCP server) - see <https://opentabs.dev>.
 
+### From source (recommended for development)
+
 ```bash
 git clone https://github.com/raffishquartan/opentabs-plugin-greenhouse.git
 cd opentabs-plugin-greenhouse
@@ -103,6 +105,16 @@ npm run build
 ```
 
 The build emits the adapter bundle into `dist/`. Point your OpenTabs install at this directory in the way it expects (consult the OpenTabs docs for the current registration mechanism). Approve the plugin from the OpenTabs Chrome side panel when it first surfaces.
+
+### From npm (alternative)
+
+The package is published to npm as [`opentabs-plugin-greenhouse`](https://www.npmjs.com/package/opentabs-plugin-greenhouse) and ships its prebuilt `dist/` bundle, so you can skip the clone-and-build step:
+
+```bash
+npm install opentabs-plugin-greenhouse
+```
+
+Then point your OpenTabs install at `node_modules/opentabs-plugin-greenhouse/dist/` (or whatever path the OpenTabs registration mechanism expects). The npm package is the same artefact as `npm run build` produces from source - it does not change how OpenTabs discovers or loads the plugin.
 
 ## Limitations
 
