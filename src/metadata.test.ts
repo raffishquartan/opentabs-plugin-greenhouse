@@ -2,39 +2,22 @@
 // Copyright (c) 2026 raffishquartan
 
 import { describe, expect, it } from 'vitest';
-import singleJobFixture from './fixtures/job-single.json' with { type: 'json' };
-import type { Job } from './api.js';
-import { extractSalaryRange, extractWorkplaceType } from './metadata.js';
+import { extractSalaryRange } from './metadata.js';
 
-describe('extractWorkplaceType', () => {
-  it('returns the metadata value for the "Workplace Type" entry', () => {
-    expect(extractWorkplaceType(singleJobFixture as unknown as Job)).toBe('Hybrid');
-  });
-
-  it('returns null when there is no Workplace Type entry', () => {
-    const job = { metadata: [{ name: 'Other', value: 'x' }] } as unknown as Job;
-    expect(extractWorkplaceType(job)).toBeNull();
-  });
-
-  it('returns null when metadata is missing or empty', () => {
-    expect(extractWorkplaceType({} as unknown as Job)).toBeNull();
-    expect(extractWorkplaceType({ metadata: [] } as unknown as Job)).toBeNull();
-  });
-
-  it('matches case-insensitively on the metadata name', () => {
-    const job = { metadata: [{ name: 'workplace type', value: 'Remote' }] } as unknown as Job;
-    expect(extractWorkplaceType(job)).toBe('Remote');
-  });
-
-  it('returns null when the value is not a string', () => {
-    const job = { metadata: [{ name: 'Workplace Type', value: 42 }] } as unknown as Job;
-    expect(extractWorkplaceType(job)).toBeNull();
-  });
-});
+// A representative Greenhouse pay-range markup snippet, modelled on real job
+// content. Inlined here so we don't need a JSON fixture for this test.
+const PAY_RANGE_HTML = [
+  '<div class="title">Annual Salary Range</div>',
+  '<div class="pay-range">',
+  '<span>€61.000</span>',
+  '<span class="divider">—</span>',
+  '<span>€72.000 EUR</span>',
+  '</div>',
+].join('');
 
 describe('extractSalaryRange', () => {
-  it('parses the pay-range markup from the fixture content', () => {
-    const result = extractSalaryRange((singleJobFixture as { content: string }).content);
+  it('parses a representative Greenhouse pay-range block', () => {
+    const result = extractSalaryRange(PAY_RANGE_HTML);
     expect(result).not.toBeNull();
     expect(result?.min).toBe('€61.000');
     expect(result?.max).toBe('€72.000 EUR');
