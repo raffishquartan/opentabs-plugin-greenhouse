@@ -1,6 +1,6 @@
 {
   "name": "opentabs-plugin-greenhouse",
-  "description": "List and inspect jobs on any Greenhouse-hosted public job board",
+  "description": "OpenTabs plugin - list and inspect jobs on any Greenhouse-hosted public job board",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/adapter.iife.js",
@@ -47,7 +47,7 @@
     "check": "npm run build && npm run type-check && npm run lint && npm run format:check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepublishOnly": "npm run check && npm test"
+    "prepublishOnly": "npm run check && npm test && npm run build"
   },
   "publishConfig": {
     "access": "public",
@@ -75,7 +75,7 @@
   "author": "raffishquartan",
   "repository": {
     "type": "git",
-    "url": "https://github.com/raffishquartan/opentabs-plugin-greenhouse.git"
+    "url": "git+https://github.com/raffishquartan/opentabs-plugin-greenhouse.git"
   },
   "homepage": "https://github.com/raffishquartan/opentabs-plugin-greenhouse",
   "bugs": {
