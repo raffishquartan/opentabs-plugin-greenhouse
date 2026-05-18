@@ -61,8 +61,8 @@
     "turndown": "^7.2.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.14",
-    "@opentabs-dev/plugin-tools": "^0.0.106",
+    "@biomejs/biome": "2.4.15",
+    "@opentabs-dev/plugin-tools": "^0.0.109",
     "@types/turndown": "^5.0.5",
     "@vitest/coverage-v8": "^4.1.5",
     "jiti": "^2.6.1",
